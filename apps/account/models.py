@@ -5,7 +5,7 @@ from django.db import models
 
 phone_regex = RegexValidator(
     regex=r'^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$',
-    message="Phone number must be entered in the format: '+998 90 090 90 21'. Up to 13 digits allowed."
+    message="Phone number must be entered in the format: '+998 33 215 05 48'. Up to 13 digits allowed."
 )
 
 
