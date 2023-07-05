@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # libs
-    # 'drf_yasg',
+    'drf_yasg',
     'import_export',
     'rest_framework',
     'rest_framework_simplejwt',
