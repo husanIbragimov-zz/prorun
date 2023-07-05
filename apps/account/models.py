@@ -1,6 +1,5 @@
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.core.validators import RegexValidator
-from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
@@ -59,6 +58,11 @@ class Account(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
 
+    def get_fullname(self):
+        if self.first_name and self.last_name:
+            return f'{self.first_name} - {self.last_name}'
+        return f'No full name'
+
     def __str__(self):
         return self.phone_number
 
@@ -68,5 +72,9 @@ class VerifyPhoneNumber(models.Model):
         verbose_name = "Confirm phone number"
         verbose_name_plural = "Confirm phone number"
 
-    phone_number = models.CharField(max_length=15, verbose_name="Phone number")
+    phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True,
+                                    unique=True, verbose_name="Phone number")  # validators should be a list
     code = models.CharField(max_length=10, verbose_name="Code")
+
+    def __str__(self):
+        return self.phone_number
