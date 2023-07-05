@@ -60,7 +60,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
     def get_fullname(self):
         if self.first_name and self.last_name:
-            return f'{self.first_name} - {self.last_name}'
+            return f'{self.first_name} {self.last_name}'
         return f'No full name'
 
     def __str__(self):
