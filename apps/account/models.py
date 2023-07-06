@@ -2,6 +2,7 @@ from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
+from rest_framework_simplejwt.tokens import RefreshToken
 
 phone_regex = RegexValidator(
     regex=r'^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$',
@@ -62,6 +63,15 @@ class Account(AbstractBaseUser, PermissionsMixin):
         if self.first_name and self.last_name:
             return f'{self.first_name} {self.last_name}'
         return f'No full name'
+
+    @property
+    def tokens(self):
+        refresh = RefreshToken.for_user(self)
+        data = {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token)
+        }
+        return data
 
     def __str__(self):
         return self.phone_number
