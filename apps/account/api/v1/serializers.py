@@ -44,3 +44,58 @@ class LoginSerializer(serializers.ModelSerializer):
 
         return data
 
+
+class VerifyPhoneNumberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VerifyPhoneNumber
+        fields = '__all__'
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(max_length=17)
+    code = serializers.CharField(max_length=50)
+    password = serializers.CharField(max_length=16)
+
+
+class VerifyPhoneNumberRegisterSerializer(serializers.ModelSerializer):
+    code = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = VerifyPhoneNumber
+        fields = ('phone_number', 'code')
+
+
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    old_password = serializers.CharField(min_length=6, max_length=64, write_only=True)
+    password = serializers.CharField(min_length=6, max_length=64, write_only=True)
+
+    class Meta:
+        model = Account
+        fields = ('password', 'old_password')
+
+    def validate(self, attrs):
+        old_password = attrs.get('old_password')
+        password = attrs.get('password')
+        request = self.context.get('request')
+        user = request.user
+
+        if not user.check_password(old_password):
+            raise serializers.ValidationError({'success': False, 'message': 'Old password not match'})
+
+        user.set_password(password)
+        user.save()
+        return attrs
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['password'])
+        instance.save()
+        return instance
+
+
+class AccountProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = [
+            'id', 'first_name', 'last_name', 'phone_number', 'avatar', 'gender', 'birthday', 'tall', 'weight',
+            'date_login', 'date_created'
+        ]
