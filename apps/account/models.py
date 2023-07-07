@@ -42,7 +42,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=223, null=True, blank=True)
     last_name = models.CharField(max_length=223, null=True, blank=True)
     phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True,
-                                    unique=True)  # validators should be a list
+                                    unique=True, help_text='for example: +998945588859')  # validators should be a list
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     gender = models.CharField(max_length=6, choices=GENDER, default='none', help_text='none, male, female', null=True)
     birthday = models.DateField(null=True, blank=True)
@@ -83,8 +83,9 @@ class VerifyPhoneNumber(models.Model):
         verbose_name_plural = "Confirm phone number"
 
     phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True,
-                                    unique=True, verbose_name="Phone number")  # validators should be a list
-    code = models.CharField(max_length=10, verbose_name="Code")
+                                    unique=True, verbose_name="Phone number",
+                                    help_text='for example: +998945588859')  # validators should be a list
+    code = models.CharField(max_length=6, verbose_name="Code")
 
     def __str__(self):
         return f'📞 Phone number: {self.phone_number};  🔐 code: {self.code}'
