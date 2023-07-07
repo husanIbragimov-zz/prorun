@@ -1,13 +1,14 @@
 import random
 
-from rest_framework.authtoken.models import Token
 from rest_framework import generics, status, authentication, permissions
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.account.models import Account, VerifyPhoneNumber
 from .permissions import IsOwnUserOrReadOnly
 from .serializers import RegisterSerializer, LoginSerializer, VerifyPhoneNumberRegisterSerializer, \
-    VerifyPhoneNumberSerializer, ChangePasswordSerializer
+    VerifyPhoneNumberSerializer, ChangePasswordSerializer, AccountProfileSerializer
 from rest_framework.response import Response
 
 from .utils import verify
@@ -15,6 +16,7 @@ from .utils import verify
 
 class RegisterAPIView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
+    parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -58,3 +60,96 @@ class LoginAPIView(generics.GenericAPIView):
         except Exception as e:
             return Response({'err': f'{e}'})
 
+
+class VerifyPhoneNumberAPIView(generics.GenericAPIView):
+    serializer_class = VerifyPhoneNumberSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request):
+        phone_number = request.data.get('phone_number')
+        code = request.data.get('code')
+        verify_code = VerifyPhoneNumber.objects.filter(phone_number=phone_number, code=code).first()
+        if verify_code:
+            user = Account.objects.filter(phone_number=phone_number).first()
+            user.is_verified = True
+            user.save()
+            verify_code.delete()
+            return Response({
+                'status': True,
+                'message': 'Phone number is verified'
+            }, status=status.HTTP_200_OK)
+        return Response({'message': 'Phone number or code invalid'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ReVerifyPhoneNumberAPIView(generics.GenericAPIView):
+    serializer_class = VerifyPhoneNumberRegisterSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request):
+        try:
+            phone_number = request.data.get('phone_number')
+            code = str(random.randint(100_000, 999_999))
+            verify_code = VerifyPhoneNumber.objects.get(phone_number=phone_number)
+            if verify_code:
+                verify_code.code = code
+                verify_code.save()
+                # verify(phone_number, code)
+
+            data = {
+                'code': code
+            }
+            return Response(data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({'error': f'{e}'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class LogoutView(generics.GenericAPIView):
+    # authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def delete(self, request):
+        try:
+            user = self.request.user
+            user.is_verified = False
+            user.save()
+            refresh = user.tokens['refresh']
+            access = user.tokens['access']
+            refresh.blacklist()
+            access.blacklist()
+            return Response({
+                "message": "Logout Success"
+            }, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+class ChangePasswordCompletedView(generics.UpdateAPIView):
+    # http://127.0.0.1:8000/account/change-password/
+    queryset = Account.objects.all()
+    serializer_class = ChangePasswordSerializer
+    permission_classes = (IsOwnUserOrReadOnly,)
+    # parser_classes = (MultiPartParser, FormParser)
+    lookup_field = 'phone_number'
+
+    def patch(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        return Response({'success': True, 'message': 'Successfully set new password'}, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        return Response({'success': True, 'message': 'Successfully set new password'}, status=status.HTTP_200_OK)
+
+
+class UserProfileListView(generics.ListAPIView):
+    queryset = Account.objects.all()
+    serializer_class = AccountProfileSerializer
+
+
+class PersonalUserProfileDetailView(generics.RetrieveUpdateAPIView):
+    queryset = Account.objects.all()
+    serializer_class = AccountProfileSerializer
+    permission_classes = (IsOwnUserOrReadOnly,)
+    parser_classes = (MultiPartParser, FormParser)
+    lookup_field = 'phone_number'
