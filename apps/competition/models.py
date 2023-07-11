@@ -32,7 +32,7 @@ class Competition(BaseModel):
     time_limit = models.CharField(max_length=223, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.title}"
+        return f"{self.title} - {self.status}"
 
 
 class CompetitionDetail(BaseModel):
