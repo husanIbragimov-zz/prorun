@@ -4,7 +4,7 @@ from apps.competition.models import Competition, Category, Participant, Competit
 
 
 class ParticipantAdmin(ImportExportModelAdmin):
-    list_display = ('participant', 'competition', 'duration', 'overrun', 'is_active',)
+    list_display = ('participant', 'competition_detail', 'duration', 'overrun', 'is_active',)
     date_hierarchy = 'created_at'
     readonly_fields = ('created_at',)
 
