@@ -39,6 +39,8 @@ class CompetitionDetail(BaseModel):
     competition = models.ForeignKey(Competition, on_delete=models.SET_NULL, null=True, blank=True,
                                     related_name='competition_details')
     title = models.CharField(max_length=223, null=True, blank=True)
+    youtube = models.URLField(null=True, blank=True)
+    media = models.FileField(upload_to='video/', null=True, blank=True)
     image = models.ImageField(upload_to='maps/', null=True, blank=True)
     is_active = models.BooleanField(default=True)
 

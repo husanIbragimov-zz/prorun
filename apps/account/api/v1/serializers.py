@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from apps.account.models import Account, VerifyPhoneNumber
+from apps.competition.api.v1.serializers import UserCompetitionsSerializer
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -93,9 +94,10 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 
 
 class AccountProfileSerializer(serializers.ModelSerializer):
+    competitions = UserCompetitionsSerializer(many=True, read_only=True)
     class Meta:
         model = Account
         fields = [
             'id', 'first_name', 'last_name', 'phone_number', 'avatar', 'gender', 'birthday', 'tall', 'weight',
-            'date_login', 'date_created'
+            'date_login', 'date_created', 'competitions'
         ]
