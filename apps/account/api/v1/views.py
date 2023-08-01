@@ -24,7 +24,7 @@ class RegisterAPIView(generics.GenericAPIView):
             serializer.save()
             phone_number = serializer.data['phone_number']
             code = str(random.randint(100_000, 999_999))
-            verify(phone_number, code)  # sms provider kelganida ishga tushadi
+            # verify(phone_number, code)  # sms provider kelganida ishga tushadi
             VerifyPhoneNumber.objects.create(phone_number=phone_number, code=code)
             data = {
                 'code': code
