@@ -9,7 +9,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ('id', 'phone_number', 'password')
+        fields = ('id', 'phone_number', 'password', 'first_name', 'last_name', 'avatar', 'gender', 'birthday')
 
     def create(self, validated_data):
         return Account.objects.create_user(**validated_data)
@@ -95,6 +95,7 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 
 class AccountProfileSerializer(serializers.ModelSerializer):
     competitions = UserCompetitionsSerializer(many=True, read_only=True)
+
     class Meta:
         model = Account
         fields = [
