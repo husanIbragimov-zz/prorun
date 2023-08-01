@@ -2,7 +2,7 @@ import requests
 
 
 def verify(phone_number, code):
-    URL = ""
+    URL = "https://notify.eskiz.uz/api/message/sms/send"
     PARAMS = {
         "Authorization": ""
     }
