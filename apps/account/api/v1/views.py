@@ -1,14 +1,13 @@
 import random
-
-from rest_framework import generics, status, authentication, permissions
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework import generics, status, permissions
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
-
+from django.shortcuts import get_object_or_404
 from apps.account.models import Account, VerifyPhoneNumber
 from .permissions import IsOwnUserOrReadOnly
 from .serializers import RegisterSerializer, LoginSerializer, VerifyPhoneNumberRegisterSerializer, \
-    VerifyPhoneNumberSerializer, ChangePasswordSerializer, AccountProfileSerializer
+    VerifyPhoneNumberSerializer, ChangePasswordSerializer, AccountProfileSerializer, AboutMeSerializer
 from rest_framework.response import Response
 
 from .utils import verify
@@ -156,3 +155,19 @@ class PersonalUserProfileDetailView(generics.RetrieveUpdateAPIView):
     permission_classes = (IsOwnUserOrReadOnly,)
     parser_classes = (MultiPartParser, FormParser)
     lookup_field = 'phone_number'
+
+
+class AboutMeListView(generics.RetrieveAPIView):
+    queryset = Account.objects.filter(is_verified=True)
+    permission_classes = (IsOwnUserOrReadOnly,)
+    serializer_class = AboutMeSerializer
+    lookup_field = 'phone_number'
+
+
+@api_view(['GET'])
+@permission_classes([IsOwnUserOrReadOnly])
+def me(request):
+    user = request.user
+    qs = get_object_or_404(Account, id=user.id, is_verified=True)
+    sz = AboutMeSerializer(qs)
+    return Response(sz.data)

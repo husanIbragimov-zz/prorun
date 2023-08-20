@@ -104,3 +104,13 @@ class AccountProfileSerializer(serializers.ModelSerializer):
             'id', 'first_name', 'last_name', 'phone_number', 'avatar', 'gender', 'birthday', 'tall', 'weight',
             'date_login', 'date_created', 'competitions'
         ]
+
+
+class AboutMeSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+    phone_number = serializers.CharField()
+    avatar = serializers.ImageField()
+
+    class Meta:
+        model = Account
+        fields = ['id', 'phone_number', 'avatar']
