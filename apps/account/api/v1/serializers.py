@@ -1,11 +1,13 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from apps.account.models import Account, VerifyPhoneNumber
+from apps.account.models import Account, VerifyPhoneNumber, phone_regex
 from apps.competition.api.v1.serializers import UserCompetitionsSerializer
 
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=6, max_length=16, write_only=True)
+    # phone_number = serializers.CharField(max_length=17, validators=[phone_regex], write_only=True)
+    avatar = serializers.ImageField()
 
     class Meta:
         model = Account

@@ -24,13 +24,13 @@ class CompetitionDetailSerializer(serializers.ModelSerializer):
 
 
 class CompetitionSerializer(serializers.ModelSerializer):
-    competition_details = CompetitionDetailSerializer(many=True)
+    category = serializers.CharField(source='category.title', read_only=True)
 
     class Meta:
         model = Competition
         fields = (
-            'id', 'category', 'title', 'image', 'start_date', 'end_date', 'distance', 'status', 'period', 'members',
-            'free_places', 'time_limit', 'competition_details')
+            'id', 'category', 'title', 'image', 'created_at'
+        )
 
 
 class ParticipantListSerializer(serializers.ModelSerializer):

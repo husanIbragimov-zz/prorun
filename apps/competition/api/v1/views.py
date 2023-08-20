@@ -13,55 +13,32 @@ class CategoryListView(generics.ListAPIView):
 
 
 class CompetitionFutureListView(generics.ListAPIView):
-    queryset = Competition.objects.filter(status='future')
     serializer_class = CompetitionSerializer
 
     def get_queryset(self):
-        try:
-            present = self.queryset.all()
-            now = timezone.now() + timezone.timedelta(hours=5)
-            print(now.replace(tzinfo=timezone.utc))
-            for index in present:
-                if index.start_date.date() == now.date():
-                    index.status = 'now'
-                    index.save()
-            return present.all()
-        except Exception as e:
-            return Response({'err': f'{e}'})
+        queryset = Competition.objects.filter(status='future').order_by('-id')
+        return queryset
 
 
 class CompetitionPresentListView(generics.ListAPIView):
-    queryset = Competition.objects.filter(status='now')
     serializer_class = CompetitionSerializer
 
     def get_queryset(self):
-        try:
-            present = self.queryset.all()
-            now = timezone.now() + timezone.timedelta(hours=5)
-            print(now.replace(tzinfo=timezone.utc))
-            for index in present:
-                if index.start_date.date() < now.date():
-                    index.status = 'past'
-                    index.save()
-            return present.all()
-        except Exception as e:
-            return Response({'err': f'{e}'})
+        queryset = Competition.objects.filter(status='now').order_by('-id')
+        return queryset
 
 
 class CompetitionPastListView(generics.ListAPIView):
-    queryset = Competition.objects.filter(status='past')
     serializer_class = CompetitionSerializer
+
+    def get_queryset(self):
+        queryset = Competition.objects.filter(status='past').order_by('-id')
+        return queryset
 
 
 class CompetitionDetailListView(generics.ListAPIView):
     queryset = CompetitionDetail.objects.all()
     serializer_class = CompetitionDetailListSerializer
-
-
-class CompetitionDetailView(generics.RetrieveAPIView):
-    queryset = CompetitionDetail.objects.all()
-    serializer_class = CompetitionDetailListSerializer
-    lookup_field = 'pk'
 
 
 class ParticipantCreateView(generics.GenericAPIView):

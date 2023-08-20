@@ -1,6 +1,7 @@
 from django.db import models
 from apps.account.models import Account
 from apps.base.models import BaseModel
+from datetime import datetime
 
 STATUS = (
     ('future', 'Future'),
@@ -34,6 +35,19 @@ class Competition(BaseModel):
     def __str__(self):
         return f"{self.title} - {self.status}"
 
+    def get_period(self):
+        curr_date = datetime.now().date()
+        if self.start_date > curr_date and self.end_date > curr_date:
+            self.status = 'future'
+
+        elif self.start_date <= curr_date and self.end_date >= curr_date:
+            self.status = 'now'
+
+        else:
+            self.status = 'past'
+        self.save()
+        return "success"
+
 
 class CompetitionDetail(BaseModel):
     competition = models.ForeignKey(Competition, on_delete=models.SET_NULL, null=True, blank=True,
@@ -52,7 +66,7 @@ class CompetitionDetail(BaseModel):
 
 class Participant(BaseModel):
     competition_detail = models.ForeignKey(CompetitionDetail, on_delete=models.SET_NULL, null=True,
-                                    related_name='participants')
+                                           related_name='participants')
     participant = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, related_name='competitions')
     duration = models.CharField(max_length=223, null=True, blank=True)
     overrun = models.FloatField(null=True, blank=True)

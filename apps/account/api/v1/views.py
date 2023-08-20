@@ -16,6 +16,8 @@ from .utils import verify
 
 class RegisterAPIView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
+    permission_classes = (permissions.AllowAny,)
+    parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
         try:
