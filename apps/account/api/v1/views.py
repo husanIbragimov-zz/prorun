@@ -61,7 +61,7 @@ class LoginAPIView(generics.GenericAPIView):
                     'tokens': user.tokens
                 }, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'err': f'{e}'})
+            return Response({'err': f'{e}'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class VerifyPhoneNumberAPIView(generics.GenericAPIView):
