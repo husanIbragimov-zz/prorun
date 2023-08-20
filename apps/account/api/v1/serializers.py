@@ -113,4 +113,4 @@ class AboutMeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ['id', 'phone_number', 'avatar']
+        fields = ['id', 'phone_number', 'get_fullname', 'avatar']
