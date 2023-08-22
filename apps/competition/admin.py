@@ -36,7 +36,7 @@ class CompetitionDetailInline(admin.StackedInline):
 
 class CompetitionAdmin(admin.ModelAdmin):
     inlines = [CompetitionDetailInline]
-    list_display = ('title', 'category', 'distance', 'status', 'period', 'members', 'free_places', 'time_limit')
+    list_display = ('title', 'category', 'distance', 'status', 'period', 'members')
     list_filter = ('status',)
     search_fields = ('title', 'category__title')
 

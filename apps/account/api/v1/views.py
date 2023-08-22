@@ -7,7 +7,8 @@ from django.shortcuts import get_object_or_404
 from apps.account.models import Account, VerifyPhoneNumber
 from .permissions import IsOwnUserOrReadOnly
 from .serializers import RegisterSerializer, LoginSerializer, VerifyPhoneNumberRegisterSerializer, \
-    VerifyPhoneNumberSerializer, ChangePasswordSerializer, AccountProfileSerializer, AboutMeSerializer
+    VerifyPhoneNumberSerializer, ChangePasswordSerializer, AccountProfileSerializer, AboutMeSerializer, \
+    MyCompetitionsSerializer
 from rest_framework.response import Response
 
 from .utils import verify
@@ -171,3 +172,11 @@ def me(request):
     qs = get_object_or_404(Account, id=user.id, is_verified=True)
     sz = AboutMeSerializer(qs)
     return Response(sz.data)
+
+
+class MyCompetitionsRetrieveView(generics.RetrieveAPIView):
+    queryset = Account.objects.all()
+    serializer_class = MyCompetitionsSerializer
+    permission_classes = (IsOwnUserOrReadOnly,)
+    lookup_field = 'phone_number'
+

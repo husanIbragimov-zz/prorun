@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from apps.account.models import Account, VerifyPhoneNumber, phone_regex
-from apps.competition.api.v1.serializers import UserCompetitionsSerializer
+from apps.competition.api.v1.serializers import UserCompetitionsSerializer, CompetitionDetailAccountSerializer
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -114,3 +114,10 @@ class AboutMeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = ['id', 'phone_number', 'get_fullname', 'avatar']
+
+
+class MyCompetitionsSerializer(serializers.ModelSerializer):
+    competitions = CompetitionDetailAccountSerializer(many=True)
+    class Meta:
+        model = Account
+        fields = ('id', 'get_fullname', 'competitions')

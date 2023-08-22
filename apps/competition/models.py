@@ -29,8 +29,8 @@ class Competition(BaseModel):
     status = models.CharField(choices=STATUS, null=True, blank=True, max_length=6)
     period = models.CharField(max_length=223, null=True, blank=True)
     members = models.IntegerField(null=True, blank=True)
-    free_places = models.CharField(max_length=223, null=True, blank=True)
-    time_limit = models.CharField(max_length=223, null=True, blank=True)
+    youtube = models.URLField(null=True, blank=True)
+    media = models.FileField(upload_to='video/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.title} - {self.status}"
@@ -53,8 +53,6 @@ class CompetitionDetail(BaseModel):
     competition = models.ForeignKey(Competition, on_delete=models.SET_NULL, null=True, blank=True,
                                     related_name='competition_details')
     title = models.CharField(max_length=223, null=True, blank=True)
-    youtube = models.URLField(null=True, blank=True)
-    media = models.FileField(upload_to='video/', null=True, blank=True)
     image = models.ImageField(upload_to='maps/', null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
