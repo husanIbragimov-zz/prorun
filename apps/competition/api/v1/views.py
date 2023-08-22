@@ -41,6 +41,12 @@ class CompetitionDetailListView(generics.ListAPIView):
     serializer_class = CompetitionDetailListSerializer
 
 
+class CompetitionDetailRetrieveAPIView(generics.RetrieveAPIView):
+    queryset = CompetitionDetail.objects.all()
+    serializer_class = CompetitionDetailListSerializer
+    lookup_field = 'pk'
+
+
 class ParticipantCreateView(generics.GenericAPIView):
     serializer_class = ParticipantSerializer
 
