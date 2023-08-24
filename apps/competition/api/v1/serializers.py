@@ -34,6 +34,7 @@ class CompetitionParticipantsSerializer(serializers.ModelSerializer):
 
 class CompetitionSerializer(serializers.ModelSerializer):
     category = serializers.CharField(source='category.title', read_only=True)
+    category_icon = serializers.ImageField(source='category.icon', read_only=True)
     participants = serializers.SerializerMethodField()
 
     def get_participants(self, obj):
@@ -44,7 +45,7 @@ class CompetitionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Competition
         fields = (
-            'id', 'category', 'title', 'image', 'created_at', 'participants'
+            'id', 'category', 'category_icon', 'title', 'image', 'created_at', 'participants'
         )
 
 
