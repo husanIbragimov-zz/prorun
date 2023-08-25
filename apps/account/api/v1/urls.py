@@ -2,7 +2,7 @@ from django.urls import path, include
 
 from apps.account.api.v1.views import RegisterAPIView, LoginAPIView, VerifyPhoneNumberAPIView, \
     ReVerifyPhoneNumberAPIView, ChangePasswordCompletedView, LogoutView, UserProfileListView, \
-    PersonalUserProfileDetailView, me, AboutMeListView, MyCompetitionsRetrieveView
+    PersonalUserProfileDetailView, me, AboutMeListView, MyCompetitionsRetrieveView, CountryListView
 
 urlpatterns = [
     path('register/', RegisterAPIView.as_view()),
@@ -12,7 +12,8 @@ urlpatterns = [
     path('re-verify-code/', ReVerifyPhoneNumberAPIView.as_view()),
     path('change-pasword/<str:phone_number>/', ChangePasswordCompletedView.as_view()),
 
-    path('users/', UserProfileListView.as_view()),
+    # path('users/', UserProfileListView.as_view()),
+    path('countries/', CountryListView.as_view()),
     path('<str:phone_number>/', PersonalUserProfileDetailView.as_view()),
     path('my-competitions/<str:phone_number>/', MyCompetitionsRetrieveView.as_view()),
     # path('me/', me),

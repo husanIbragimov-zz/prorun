@@ -1,7 +1,8 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from apps.account.models import Account, VerifyPhoneNumber, phone_regex
+from apps.account.models import Account, VerifyPhoneNumber, phone_regex, Country
 from apps.competition.api.v1.serializers import UserCompetitionsSerializer, CompetitionDetailAccountSerializer
+from apps.competition.models import CompetitionDetail, Participant
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -96,13 +97,11 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 
 
 class AccountProfileSerializer(serializers.ModelSerializer):
-    competitions = UserCompetitionsSerializer(many=True, read_only=True)
-
     class Meta:
         model = Account
         fields = [
-            'id', 'first_name', 'last_name', 'phone_number', 'avatar', 'gender', 'birthday', 'tall', 'weight',
-            'date_login', 'date_created', 'competitions'
+            'id', 'first_name', 'last_name', 'phone_number', 'avatar', 'gender', 'birthday', 'address', 'tall',
+            'weight', 'date_login', 'date_created'
         ]
 
 
@@ -116,8 +115,25 @@ class AboutMeSerializer(serializers.ModelSerializer):
         fields = ['id', 'phone_number', 'get_fullname', 'avatar']
 
 
+class CountrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Country
+        fields = ('id', 'name', 'flag')
+
+
+class ParticipantUserSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(source='competition_detail.competition.title', read_only=True)
+    image = serializers.ImageField(source='competition_detail.image', read_only=True)
+
+    class Meta:
+        model = Participant
+        fields = ('id', 'title', 'image', 'duration', 'created_at')
+
+
 class MyCompetitionsSerializer(serializers.ModelSerializer):
-    competitions = CompetitionDetailAccountSerializer(many=True)
+    competitions = ParticipantUserSerializer(many=True)
+    address = CountrySerializer(many=False)
+
     class Meta:
         model = Account
-        fields = ('id', 'get_fullname', 'competitions')
+        fields = ('id', 'get_fullname', 'address', 'age', 'competitions')

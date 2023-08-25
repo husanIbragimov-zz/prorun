@@ -28,6 +28,8 @@ class Competition(BaseModel):
     distance = models.CharField(max_length=223, null=True, blank=True)
     status = models.CharField(choices=STATUS, null=True, blank=True, max_length=6)
     period = models.CharField(max_length=223, null=True, blank=True)
+    free_places = models.CharField(max_length=223, null=True, blank=True)
+    limit = models.CharField(max_length=223, null=True, blank=True)
     members = models.IntegerField(null=True, blank=True)
     youtube = models.URLField(null=True, blank=True)
     media = models.FileField(upload_to='video/', null=True, blank=True)

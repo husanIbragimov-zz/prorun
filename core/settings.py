@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     # local apps
     'apps.account',
     'apps.competition',
+    'apps.main'
 ]
 
 MIDDLEWARE = [

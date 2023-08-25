@@ -4,11 +4,11 @@ from rest_framework import generics, status, permissions
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
-from apps.account.models import Account, VerifyPhoneNumber
+from apps.account.models import Account, VerifyPhoneNumber, Country
 from .permissions import IsOwnUserOrReadOnly
 from .serializers import RegisterSerializer, LoginSerializer, VerifyPhoneNumberRegisterSerializer, \
     VerifyPhoneNumberSerializer, ChangePasswordSerializer, AccountProfileSerializer, AboutMeSerializer, \
-    MyCompetitionsSerializer
+    MyCompetitionsSerializer, CountrySerializer
 from rest_framework.response import Response
 
 from .utils import verify
@@ -180,3 +180,7 @@ class MyCompetitionsRetrieveView(generics.RetrieveAPIView):
     permission_classes = (IsOwnUserOrReadOnly,)
     lookup_field = 'phone_number'
 
+
+class CountryListView(generics.ListAPIView):
+    queryset = Country.objects.all()
+    serializer_class = CountrySerializer

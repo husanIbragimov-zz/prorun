@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import PermissionsMixin
@@ -38,6 +40,14 @@ GENDER = (
 )
 
 
+class Country(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    flag = models.ImageField(upload_to='countries/', null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Account(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=223, null=True, blank=True)
     last_name = models.CharField(max_length=223, null=True, blank=True)
@@ -48,6 +58,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     birthday = models.DateField(null=True, blank=True)
     tall = models.FloatField(null=True, blank=True)
     weight = models.FloatField(null=True, blank=True)
+    address = models.ForeignKey(Country, on_delete=models.CASCADE, null=True, blank=True)
     is_verified = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -63,6 +74,13 @@ class Account(AbstractBaseUser, PermissionsMixin):
         if self.first_name and self.last_name:
             return f'{self.first_name} {self.last_name}'
         return f'{self.first_name}'
+
+    def age(self):
+        curr = datetime.now().year
+        if self.birthday:
+            age = curr - self.birthday.year
+            return age
+        return 'no born year'
 
     @property
     def tokens(self):
