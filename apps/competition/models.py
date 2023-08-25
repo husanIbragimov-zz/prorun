@@ -68,7 +68,7 @@ class Participant(BaseModel):
     competition_detail = models.ForeignKey(CompetitionDetail, on_delete=models.SET_NULL, null=True,
                                            related_name='participants')
     participant = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, related_name='competitions')
-    duration = models.CharField(max_length=223, null=True, blank=True)
+    duration = models.TimeField(null=True, blank=True)
     overrun = models.FloatField(null=True, blank=True)
     personal_id = models.BigIntegerField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
