@@ -37,6 +37,7 @@ class CompetitionDetailChildren(serializers.ModelSerializer):
         model = CompetitionDetail
         fields = ('id', 'title')
 
+
 class CompetitionSerializer(serializers.ModelSerializer):
     category = CategorySerializer(many=False)
     participants = serializers.SerializerMethodField()
@@ -48,7 +49,8 @@ class CompetitionSerializer(serializers.ModelSerializer):
         return sz.data
 
     def get_participants(self, obj):
-        user = Account.objects.filter(competitions__competition_detail__competition=obj).order_by('-id')[:3]
+        user = Account.objects.filter(competitions__competition_detail__competition=obj).order_by(
+            'competitions__duration')[:3]
         sz = CompetitionParticipantsSerializer(user, many=True)
         return sz.data
 
