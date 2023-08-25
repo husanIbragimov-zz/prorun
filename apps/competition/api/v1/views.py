@@ -2,7 +2,7 @@ from django.db.models import Q
 from rest_framework import generics, status
 from apps.competition.models import Category, Competition, CompetitionDetail, Participant
 from .serializers import CategorySerializer, CompetitionSerializer, CompetitionDetailSerializer, ParticipantSerializer, \
-    CompetitionDetailListSerializer, ParticipantListSerializer
+    CompetitionDetailListSerializer, ParticipantListSerializer, ParticipantDataSerializer
 from django.utils import timezone
 from rest_framework.response import Response
 
@@ -29,10 +29,10 @@ class CompetitionPresentListView(generics.ListAPIView):
 
 
 class CompetitionPastListView(generics.ListAPIView):
-    serializer_class = CompetitionSerializer
+    serializer_class = ParticipantDataSerializer
 
     def get_queryset(self):
-        queryset = Competition.objects.filter(status='past').order_by('-id')
+        queryset = CompetitionDetail.objects.filter(competition__status='past').order_by('-id')
         return queryset
 
 
@@ -67,4 +67,10 @@ class ParticipantListView(generics.ListAPIView):
 class ParticipantRetrieveView(generics.RetrieveAPIView):
     queryset = Participant.objects.filter(is_active=True)
     serializer_class = ParticipantListSerializer
+    lookup_field = 'pk'
+
+
+class ParticipantDataListView(generics.RetrieveAPIView):
+    queryset = CompetitionDetail.objects.all()
+    serializer_class = ParticipantDataSerializer
     lookup_field = 'pk'

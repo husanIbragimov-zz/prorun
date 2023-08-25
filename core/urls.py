@@ -52,6 +52,7 @@ urlpatterns = [
     # local apps
     path('account/', include('apps.account.api.urls')),
     path('competition/', include('apps.competition.api.urls')),
+    path('content/', include('apps.main.api.urls')),
 ]
 
 if settings.DEBUG:

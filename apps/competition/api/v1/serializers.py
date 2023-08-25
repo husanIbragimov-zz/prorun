@@ -19,7 +19,7 @@ class TextDetailSerializer(serializers.ModelSerializer):
 
 class CompetitionDetailSerializer(serializers.ModelSerializer):
     texts = TextDetailSerializer(many=True)
-    competition = serializers.CharField(source='competition.title')
+    competition = serializers.CharField(source='competition.title', read_only=True)
 
     class Meta:
         model = CompetitionDetail
@@ -32,10 +32,20 @@ class CompetitionParticipantsSerializer(serializers.ModelSerializer):
         fields = ('id', 'get_fullname', 'avatar')
 
 
+class CompetitionDetailChildren(serializers.ModelSerializer):
+    class Meta:
+        model = CompetitionDetail
+        fields = ('id', 'title')
+
 class CompetitionSerializer(serializers.ModelSerializer):
-    category = serializers.CharField(source='category.title', read_only=True)
-    category_icon = serializers.ImageField(source='category.icon', read_only=True)
+    category = CategorySerializer(many=False)
     participants = serializers.SerializerMethodField()
+    competition_details = serializers.SerializerMethodField()
+
+    def get_competition_details(self, obj):
+        qs = CompetitionDetail.objects.filter(competition_id=obj.id)
+        sz = CompetitionDetailChildren(qs, many=True)
+        return sz.data
 
     def get_participants(self, obj):
         user = Account.objects.filter(competitions__competition_detail__competition=obj).order_by('-id')[:3]
@@ -45,14 +55,27 @@ class CompetitionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Competition
         fields = (
-            'id', 'category', 'category_icon', 'title', 'image', 'distance', 'created_at', 'participants'
+            'id', 'category', 'title', 'image', 'distance', 'created_at', 'participants', 'competition_details'
         )
 
 
 class ParticipantListSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(source='participant.get_fullname', read_only=True)
+    address = serializers.CharField(source='participant.address', read_only=True)
+    flag = serializers.CharField(source='participant.address.flag', read_only=True)
+
     class Meta:
         model = Participant
-        fields = ('id', 'participant', 'overrun', 'personal_id', 'created_at')
+        fields = ('id', 'full_name', 'address', 'flag', 'personal_id', 'duration')
+
+
+class ParticipantDataSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(source='competition.title', read_only=True)
+    participants = ParticipantListSerializer(many=True)
+
+    class Meta:
+        model = CompetitionDetail
+        fields = ('id', 'title', 'participants')
 
 
 class CompetitionDetailListSerializer(serializers.ModelSerializer):
@@ -98,4 +121,5 @@ class CompetitionDetailAccountSerializer(serializers.ModelSerializer):
 
 
 class CompetitionDetailInfoSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        pass
