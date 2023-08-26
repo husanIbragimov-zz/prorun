@@ -52,7 +52,7 @@ class ParticipantCreateView(generics.GenericAPIView):
 
     # permission_classes = ()
     def post(self, request):
-        user = request.user
+        user = self.request.user
         competition = request.data.get('competition_detail')
         if CompetitionDetail.objects.filter(Q(competition=competition) & Q(competition__status='future')):
             Participant.objects.create(competition=competition, participant=user)

@@ -13,3 +13,11 @@ class News(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Partner(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    logo = models.ImageField(upload_to='partners/', null=True, blank=True)
+
+    def __str__(self):
+        return self.name

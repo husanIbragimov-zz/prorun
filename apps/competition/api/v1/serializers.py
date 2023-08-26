@@ -27,6 +27,7 @@ class CompetitionDetailSerializer(serializers.ModelSerializer):
 
 
 class CompetitionParticipantsSerializer(serializers.ModelSerializer):
+    avatar = serializers.ImageField()
     class Meta:
         model = Account
         fields = ('id', 'get_fullname', 'avatar')
