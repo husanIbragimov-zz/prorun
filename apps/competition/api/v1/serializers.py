@@ -27,16 +27,29 @@ class CompetitionDetailSerializer(serializers.ModelSerializer):
 
 
 class CompetitionParticipantsSerializer(serializers.ModelSerializer):
-    avatar = serializers.ImageField()
+    avatar = serializers.ImageField(source='avatar', read_only=True)
+    full_name = serializers.CharField(max_length=223, read_only=True)
+
     class Meta:
         model = Account
-        fields = ('id', 'get_fullname', 'avatar')
+        fields = ('id', 'full_name', 'avatar')
 
 
 class CompetitionDetailChildren(serializers.ModelSerializer):
     class Meta:
         model = CompetitionDetail
         fields = ('id', 'title')
+
+
+class ParticipantListSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(source='participant.get_fullname', read_only=True)
+    avatar = serializers.ImageField(source='participant.avatar', read_only=True)
+    address = serializers.CharField(source='participant.address', read_only=True)
+    flag = serializers.CharField(source='participant.address.flag', read_only=True)
+
+    class Meta:
+        model = Participant
+        fields = ('id', 'full_name', 'avatar', 'address', 'flag', 'personal_id', 'duration')
 
 
 class CompetitionSerializer(serializers.ModelSerializer):
@@ -50,9 +63,9 @@ class CompetitionSerializer(serializers.ModelSerializer):
         return sz.data
 
     def get_participants(self, obj):
-        user = Account.objects.filter(competitions__competition_detail__competition=obj).order_by(
-            'competitions__duration')[:3]
-        sz = CompetitionParticipantsSerializer(user, many=True)
+        user = Participant.objects.filter(competition_detail__competition_id=obj.id).order_by(
+            '-id')[:3]
+        sz = ParticipantListSerializer(user, many=True)
         return sz.data
 
     class Meta:
@@ -60,17 +73,6 @@ class CompetitionSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'category', 'title', 'image', 'distance', 'created_at', 'participants', 'competition_details'
         )
-
-
-class ParticipantListSerializer(serializers.ModelSerializer):
-    full_name = serializers.CharField(source='participant.get_fullname', read_only=True)
-    avatar = serializers.ImageField(source='participant.avatar', read_only=True)
-    address = serializers.CharField(source='participant.address', read_only=True)
-    flag = serializers.CharField(source='participant.address.flag', read_only=True)
-
-    class Meta:
-        model = Participant
-        fields = ('id', 'full_name', 'avatar', 'address', 'flag', 'personal_id', 'duration')
 
 
 class ParticipantDataSerializer(serializers.ModelSerializer):
@@ -93,8 +95,8 @@ class CompetitionDetailListSerializer(serializers.ModelSerializer):
     limit = serializers.CharField(source='competition.limit', read_only=True)
 
     def get_participants(self, obj):
-        user = Account.objects.filter(competitions__competition_detail=obj).order_by('-id')[:3]
-        sz = CompetitionParticipantsSerializer(user, many=True)
+        user = Participant.objects.filter(competition_detail__competition_id=obj.id).order_by('-id')[:3]
+        sz = ParticipantListSerializer(user, many=True)
         return sz.data
 
     class Meta:
