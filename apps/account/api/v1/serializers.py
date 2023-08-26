@@ -123,17 +123,20 @@ class CountrySerializer(serializers.ModelSerializer):
 
 class ParticipantUserSerializer(serializers.ModelSerializer):
     title = serializers.CharField(source='competition_detail.competition.title', read_only=True)
+    category_name = serializers.CharField(source='competition_detail.title', read_only=True)
+    category_icon = serializers.ImageField(source='competition_detail.competition.category.icon', read_only=True)
     image = serializers.ImageField(source='competition_detail.image', read_only=True)
 
     class Meta:
         model = Participant
-        fields = ('id', 'title', 'image', 'duration', 'created_at')
+        fields = ('id', 'title', 'category_name', 'category_icon', 'image', 'duration', 'created_at')
 
 
 class MyCompetitionsSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(source='get_fullname', read_only=True)
     competitions = ParticipantUserSerializer(many=True)
     address = CountrySerializer(many=False)
 
     class Meta:
         model = Account
-        fields = ('id', 'get_fullname', 'address', 'age', 'competitions')
+        fields = ('id', 'full_name', 'avatar', 'address', 'age', 'competitions')
