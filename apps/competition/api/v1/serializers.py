@@ -63,12 +63,13 @@ class CompetitionSerializer(serializers.ModelSerializer):
 
 class ParticipantListSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='participant.get_fullname', read_only=True)
+    avatar = serializers.CharField(source='participant.avatar', read_only=True)
     address = serializers.CharField(source='participant.address', read_only=True)
     flag = serializers.CharField(source='participant.address.flag', read_only=True)
 
     class Meta:
         model = Participant
-        fields = ('id', 'full_name', 'address', 'flag', 'personal_id', 'duration')
+        fields = ('id', 'full_name', 'avatar', 'address', 'flag', 'personal_id', 'duration')
 
 
 class ParticipantDataSerializer(serializers.ModelSerializer):
