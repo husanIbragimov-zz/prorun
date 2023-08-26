@@ -1,7 +1,7 @@
 from rest_framework import generics
 
-from apps.main.api.v1.serializers import NewsDefaultSerializer, NewsSerializer
-from apps.main.models import News
+from apps.main.api.v1.serializers import NewsDefaultSerializer, NewsSerializer, PartnerSerializer
+from apps.main.models import News, Partner
 
 
 class NewsDefaultBannerListView(generics.ListAPIView):
@@ -17,4 +17,15 @@ class NewsListView(generics.ListAPIView):
 class NewsRetrieveAPIView(generics.RetrieveAPIView):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
+    lookup_field = 'pk'
+
+
+class PartnerListView(generics.ListAPIView):
+    queryset = Partner.objects.all()
+    serializer_class = PartnerSerializer
+
+
+class PartnerRetrieveView(generics.RetrieveAPIView):
+    queryset = Partner.objects.all()
+    serializer_class = PartnerSerializer
     lookup_field = 'pk'
