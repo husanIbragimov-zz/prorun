@@ -63,7 +63,7 @@ class CompetitionSerializer(serializers.ModelSerializer):
 
 class ParticipantListSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='participant.get_fullname', read_only=True)
-    avatar = serializers.CharField(source='participant.avatar', read_only=True)
+    avatar = serializers.ImageField(source='participant.avatar', read_only=True)
     address = serializers.CharField(source='participant.address', read_only=True)
     flag = serializers.CharField(source='participant.address.flag', read_only=True)
 
