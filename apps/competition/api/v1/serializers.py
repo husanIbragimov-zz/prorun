@@ -87,7 +87,7 @@ class ParticipantDataSerializer(serializers.ModelSerializer):
 class CompetitionDetailListSerializer(serializers.ModelSerializer):
     texts = TextDetailSerializer(many=True)
     competition = serializers.CharField(source='competition.title', read_only=True)
-    participants = serializers.SerializerMethodField()
+    participants = ParticipantListSerializer(many=True)
     period = serializers.CharField(source='competition.period', read_only=True)
     distance = serializers.CharField(source='competition.distance', read_only=True)
     members = serializers.CharField(source='competition.members', read_only=True)
