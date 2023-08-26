@@ -23,9 +23,3 @@ class NewsRetrieveAPIView(generics.RetrieveAPIView):
 class PartnerListView(generics.ListAPIView):
     queryset = Partner.objects.all()
     serializer_class = PartnerSerializer
-
-
-class PartnerRetrieveView(generics.RetrieveAPIView):
-    queryset = Partner.objects.all()
-    serializer_class = PartnerSerializer
-    lookup_field = 'pk'
