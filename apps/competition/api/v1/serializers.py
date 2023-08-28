@@ -126,6 +126,16 @@ class CompetitionDetailAccountSerializer(serializers.ModelSerializer):
         fields = ('id', 'competition', 'title', 'image')
 
 
-class CompetitionDetailInfoSerializer(serializers.ModelSerializer):
+class CompetitionDetailsListSerializer(serializers.ModelSerializer):
     class Meta:
-        pass
+        model = CompetitionDetail
+        fields = ('id', 'title')
+
+
+class CompetitionListSerializer(serializers.ModelSerializer):
+    category_icon = serializers.ImageField(source='category.icon', read_only=True)
+    competition_details = CompetitionDetailsListSerializer(many=True)
+
+    class Meta:
+        model = Competition
+        fields = ('id', 'title', 'category_icon', 'competition_details')
