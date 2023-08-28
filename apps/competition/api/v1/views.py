@@ -33,7 +33,7 @@ class CompetitionPastListView(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = CompetitionDetail.objects.filter(competition__status='past').order_by('-id')
-        return queryset
+        return queryset[:2]
 
 
 class CompetitionDetailListView(generics.ListAPIView):
