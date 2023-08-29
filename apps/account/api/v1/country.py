@@ -13,7 +13,7 @@ def get_country():
     flag = df['flags']
     try:
         for i in range(len(name)):
-            country = Country.objects.create(name=name[i].get('common'), flag=flag[i].get('png'))
+            country = Country.objects.get_or_create(name=name[i].get('common'), flag=flag[i].get('png'))
             country.save()
         return 'zor'
     except Exception as e:
