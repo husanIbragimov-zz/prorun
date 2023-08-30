@@ -172,3 +172,9 @@ class CompetitionDetailSerializer(serializers.ModelSerializer):
             'id', 'title', 'sub_title', 'youtube', 'media', 'category_icon', 'competition_maps', 'period', 'distance',
             'members', 'joiners_count', 'free_joiners_count',
             'where_is_ticket', 'limit', 'competition_texts', 'participants')
+
+
+class JoinToCompetitionCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Participant
+        fields = ('choice',)

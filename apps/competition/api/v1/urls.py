@@ -4,7 +4,7 @@ from django.urls import path
 #     CompetitionCategoryListView
 
 from .viewss import CategoryListView, BannerImagesListView, FutureCompetitionListView, PastCompetitionListView, \
-    ParticipantRetrieveView, CompetitionDetailRetrieveAPIView
+    ParticipantRetrieveView, CompetitionDetailRetrieveAPIView, JoinToCompetitionCreateView
 
 urlpatterns = [
     path('category/', CategoryListView.as_view()),
@@ -13,6 +13,7 @@ urlpatterns = [
     path('competitions/past/', PastCompetitionListView.as_view()),
     path('participant/<int:choice_id>/', ParticipantRetrieveView.as_view()),
     path('detail/<int:pk>/', CompetitionDetailRetrieveAPIView.as_view()),
+    path('join/<int:choice_id>/', JoinToCompetitionCreateView.as_view()),
     # path('detail/', CompetitionDetailListView.as_view()),
     # path('detail/<int:pk>/', CompetitionDetailRetrieveAPIView.as_view()),
 

@@ -1,11 +1,13 @@
 from django.db.models import Q
-from rest_framework import generics, status
+from django.shortcuts import get_object_or_404
+from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 
 from apps.competition.models import Category, Competition, CompetitionTexts, CompetitionMaps, Participant
 
 from .serializerss import CategorySerializer, BannerImagesSerializer, FutureCompetitionSerializer, \
-    PastCompetitionSerializer, ParticipantListSerializer, CompetitionDetailSerializer
+    PastCompetitionSerializer, ParticipantListSerializer, CompetitionDetailSerializer, \
+    JoinToCompetitionCreateSerializer
 
 
 class CategoryListView(generics.ListAPIView):
@@ -47,3 +49,25 @@ class CompetitionDetailRetrieveAPIView(generics.RetrieveAPIView):
     queryset = Competition.objects.all()
     serializer_class = CompetitionDetailSerializer
     lookup_field = 'pk'
+
+
+class JoinToCompetitionCreateView(generics.CreateAPIView):
+    queryset = Participant.objects.all()
+    serializer_class = JoinToCompetitionCreateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'competition_detail'
+
+    def post(self, request, *args, **kwargs):
+        competition_map_id = self.kwargs['choice_id']
+        user = self.request.user
+        competition_map = get_object_or_404(CompetitionMaps, id=competition_map_id, status='future')
+        if competition_map.participant_choices.filter(user=user).exists():
+            return Response({"message": "You have already joined this competition"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if competition_map:
+            sz = self.serializer_class(data=request.data)
+            if sz.is_valid():
+                sz.save(user=user, choice_id=competition_map, cometition_id=competition_map.competition.id)
+                return Response({'message': 'Success'}, status=status.HTTP_201_CREATED)
+            return Response({'message': 'Error'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Error'}, status=status.HTTP_400_BAD_REQUEST)
