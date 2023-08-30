@@ -43,11 +43,11 @@ class BannerParticipantsSerializer(serializers.ModelSerializer):
 
 class BannerImagesSerializer(serializers.ModelSerializer):
     count = serializers.SerializerMethodField()
-    category = serializers.SerializerMethodField()
+    category = CategorySerializer(many=True)
     competition_participants = serializers.SerializerMethodField()
 
-    def get_category(self, obj):
-        return CategorySerializer(obj.category).data
+    # def get_category(self, obj):
+    #     return CategorySerializer(obj.category).data
 
     def get_competition_participants(self, obj):
         request = self.context.get('request')
