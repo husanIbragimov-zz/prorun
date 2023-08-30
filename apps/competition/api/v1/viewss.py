@@ -7,7 +7,7 @@ from apps.competition.models import Category, Competition, CompetitionTexts, Com
 
 from .serializerss import CategorySerializer, BannerImagesSerializer, FutureCompetitionSerializer, \
     PastCompetitionSerializer, ParticipantListSerializer, CompetitionDetailSerializer, \
-    JoinToCompetitionCreateSerializer
+    JoinToCompetitionCreateSerializer, CompetitionMapsUserListSerializer
 
 
 class CategoryListView(generics.ListAPIView):
@@ -36,13 +36,13 @@ class PastCompetitionListView(generics.ListAPIView):
 
 
 class ParticipantRetrieveView(generics.ListAPIView):
-    queryset = Participant.objects.all()
-    serializer_class = ParticipantListSerializer
+    queryset = CompetitionMaps.objects.all()
+    serializer_class = CompetitionMapsUserListSerializer
     lookup_field = 'choice_id'
 
     def get_queryset(self):
         choice_id = self.kwargs['choice_id']
-        return self.queryset.filter(Q(choice_id=choice_id)).order_by('duration')
+        return self.queryset.filter(Q(competition_id=choice_id))
 
 
 class CompetitionDetailRetrieveAPIView(generics.RetrieveAPIView):

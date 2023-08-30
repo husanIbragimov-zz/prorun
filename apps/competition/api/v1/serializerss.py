@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from apps.account.models import Account
 from apps.competition.models import Category, Competition, CompetitionMaps, Participant, CompetitionTexts
 
 
@@ -102,6 +101,18 @@ class ParticipantListSerializer(serializers.ModelSerializer):
             return None
 
 
+class CompetitionMapsUserListSerializer(serializers.ModelSerializer):
+    participants = serializers.SerializerMethodField()
+
+    def get_participants(self, obj):
+        participants = Participant.objects.filter(choice_id=obj.id).order_by('duration')
+        return ParticipantListSerializer(participants, many=True).data
+
+    class Meta:
+        model = CompetitionMaps
+        fields = ('id', 'title', 'participants')
+
+
 class CompetitionMapsListSerializer(serializers.ModelSerializer):
     participants = serializers.SerializerMethodField()
 
@@ -146,6 +157,7 @@ class CompetitionMapImagesSerializer(serializers.ModelSerializer):
     def get_participants(self, obj):
         participants = Participant.objects.filter(competition_id=obj.id).order_by('duration')
         return ParticipantListSerializer(participants[:3], many=True).data
+
     class Meta:
         model = CompetitionMaps
         fields = ('id', 'title', 'maps', 'participants')
