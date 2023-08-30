@@ -66,9 +66,6 @@ class FutureCompetitionSerializer(serializers.ModelSerializer):
     category = CategorySerializer(many=False)
     last_distance = serializers.CharField(source='competition_maps.title', read_only=True)
 
-    # def get_category(self, obj):
-    #     return CategorySerializer(obj.category).data
-
     class Meta:
         model = Competition
         fields = ('id', 'title', 'image', 'category', 'last_distance', 'period')
@@ -112,12 +109,9 @@ class CompetitionMapsListSerializer(serializers.ModelSerializer):
 
 
 class PastCompetitionSerializer(serializers.ModelSerializer):
-    category = serializers.SerializerMethodField()
+    category = CategorySerializer(many=False)
     distances = CompetitionMapsListSerializer(many=True, source='competition_maps')
     participants = serializers.SerializerMethodField()
-
-    def get_category(self, obj):
-        return CategorySerializer(obj.category).data
 
     def get_participants(self, obj):
         participants = Participant.objects.filter(competition_id=obj.id).order_by('duration')
