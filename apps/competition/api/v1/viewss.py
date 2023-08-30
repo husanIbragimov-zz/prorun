@@ -53,14 +53,14 @@ class CompetitionDetailRetrieveAPIView(generics.RetrieveAPIView):
 
 class JoinToCompetitionCreateView(generics.CreateAPIView):
     queryset = Participant.objects.all()
+    serializer_class = JoinToCompetitionCreateSerializer
     permission_classes = [permissions.IsAuthenticated]
-    lookup_field = 'competition_detail'
 
     def post(self, request, *args, **kwargs):
         competition_map_id = self.kwargs['choice_id']
         user = self.request.user
         competition_map = get_object_or_404(CompetitionMaps, id=competition_map_id, status='future')
-        if competition_map.participant_choices.filter(user=user).exists():
+        if competition_map.participant_choices.filter(user=user):
             return Response({"message": "You have already joined this competition"}, status=status.HTTP_400_BAD_REQUEST)
 
         if competition_map:
