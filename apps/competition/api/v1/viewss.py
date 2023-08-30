@@ -9,7 +9,7 @@ from .serializerss import CategorySerializer, BannerImagesSerializer, FutureComp
 
 
 class CategoryListView(generics.ListAPIView):
-    queryset = Category.objects.all().order_by('-id')
+    queryset = Category.objects.all().order_by('id')
     serializer_class = CategorySerializer
 
 
