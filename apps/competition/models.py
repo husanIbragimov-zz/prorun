@@ -21,7 +21,7 @@ class Category(BaseModel):
 
 class Competition(BaseModel):
     status = models.CharField(choices=STATUS, null=True, blank=True, max_length=6)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=223, null=True, blank=True)
     sub_title = models.CharField(max_length=223, null=True, blank=True)
     image = models.ImageField(upload_to='competitions/', null=True, blank=True)
