@@ -59,11 +59,12 @@ class JoinToCompetitionCreateView(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         competition_map_id = self.kwargs['choice_id']
         user = self.request.user
-        competition_map = get_object_or_404(CompetitionMaps, id=competition_map_id, competition_status='future')
+        competition_map = get_object_or_404(CompetitionMaps, id=competition_map_id)
+        competition = get_object_or_404(Competition, id=competition_map.competition.id)
         if competition_map.participant_choices.filter(user=user):
             return Response({"message": "You have already joined this competition"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if competition_map:
+        if competition_map and competition.status == 'future':
             Participant.objects.get_or_create(user=user, choice_id=competition_map,
                                               cometition_id=competition_map.competition.id)
             return Response({'message': 'Success'}, status=status.HTTP_201_CREATED)
