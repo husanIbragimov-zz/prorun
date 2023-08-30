@@ -139,12 +139,11 @@ class ParticipantRetrieveSerializer(serializers.ModelSerializer):
 class CompetitionMapImagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompetitionMaps
-        fields = ('id', 'maps')
+        fields = ('id', 'title', 'maps')
 
 
 class CompetitionDetailSerializer(serializers.ModelSerializer):
     category_icon = serializers.ImageField(source='category.icon', read_only=True)
-    distances = CompetitionMapsListSerializer(many=True, source='competition_maps', read_only=True)
     participants = serializers.SerializerMethodField()
     competition_texts = CompetitionTextsSerializer(many=True)
     competition_maps = CompetitionMapImagesSerializer(many=True)
@@ -169,4 +168,4 @@ class CompetitionDetailSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'title', 'sub_title', 'youtube', 'media', 'category_icon', 'competition_maps', 'period', 'distance',
             'members', 'joiners_count', 'free_joiners_count',
-            'where_is_ticket', 'limit', 'competition_texts', 'distances', 'participants')
+            'where_is_ticket', 'limit', 'competition_texts', 'participants')
