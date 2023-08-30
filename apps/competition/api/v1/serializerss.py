@@ -141,14 +141,18 @@ class ParticipantRetrieveSerializer(serializers.ModelSerializer):
 
 
 class CompetitionMapImagesSerializer(serializers.ModelSerializer):
+    participants = serializers.SerializerMethodField()
+
+    def get_participants(self, obj):
+        participants = Participant.objects.filter(competition_id=obj.id).order_by('duration')
+        return ParticipantListSerializer(participants[:3], many=True).data
     class Meta:
         model = CompetitionMaps
-        fields = ('id', 'title', 'maps')
+        fields = ('id', 'title', 'maps', 'participants')
 
 
 class CompetitionDetailSerializer(serializers.ModelSerializer):
     category_icon = serializers.ImageField(source='category.icon', read_only=True)
-    participants = serializers.SerializerMethodField()
     competition_texts = CompetitionTextsSerializer(many=True)
     competition_maps = CompetitionMapImagesSerializer(many=True)
     joiners_count = serializers.SerializerMethodField()
@@ -163,16 +167,12 @@ class CompetitionDetailSerializer(serializers.ModelSerializer):
             return free_place
         return 0
 
-    def get_participants(self, obj):
-        participants = Participant.objects.filter(competition_id=obj.id).order_by('duration')
-        return ParticipantListSerializer(participants[:3], many=True).data
-
     class Meta:
         model = Competition
         fields = (
             'id', 'title', 'sub_title', 'youtube', 'media', 'category_icon', 'competition_maps', 'period', 'distance',
             'members', 'joiners_count', 'free_joiners_count',
-            'where_is_ticket', 'limit', 'competition_texts', 'participants')
+            'where_is_ticket', 'limit', 'competition_texts')
 
 
 class JoinToCompetitionCreateSerializer(serializers.ModelSerializer):
