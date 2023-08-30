@@ -66,6 +66,6 @@ class JoinToCompetitionCreateView(generics.CreateAPIView):
 
         if competition_map and competition.status == 'future':
             Participant.objects.get_or_create(user=user, choice_id=competition_map,
-                                              cometition_id=competition_map.competition.id)
+                                              cometition_id=competition.id)
             return Response({'message': 'Success'}, status=status.HTTP_201_CREATED)
         return Response({'message': 'Error'}, status=status.HTTP_400_BAD_REQUEST)
