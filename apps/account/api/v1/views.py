@@ -174,11 +174,14 @@ def me(request):
     return Response(sz.data)
 
 
-class MyCompetitionsRetrieveView(generics.RetrieveAPIView):
+class MyCompetitionsRetrieveView(generics.ListAPIView):
     queryset = Account.objects.all()
     serializer_class = MyCompetitionsSerializer
     permission_classes = (IsOwnUserOrReadOnly,)
-    lookup_field = 'phone_number'
+
+    def get_queryset(self):
+        user = self.request.user
+        return self.queryset.filter(id=user.id)
 
 
 class CountryListView(generics.ListAPIView):

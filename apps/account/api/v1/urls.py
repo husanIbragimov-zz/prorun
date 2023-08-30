@@ -15,7 +15,7 @@ urlpatterns = [
     # path('users/', UserProfileListView.as_view()),
     path('countries/', CountryListView.as_view()),
     path('<str:phone_number>/', PersonalUserProfileDetailView.as_view()),
-    path('my-competitions/<str:phone_number>/', MyCompetitionsRetrieveView.as_view()),
+    path('history', MyCompetitionsRetrieveView.as_view()),
     # path('me/', me),
     path('me/<str:phone_number>/', AboutMeListView.as_view()),
 ]
