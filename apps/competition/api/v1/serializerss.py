@@ -56,7 +56,7 @@ class BannerImagesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Competition
-        fields = ('id', 'title', 'image', 'category_icon', 'distance', 'count', 'competition_participants')
+        fields = ('id', 'title', 'image', 'category', 'distance', 'count', 'competition_participants')
 
 
 class FutureCompetitionSerializer(serializers.ModelSerializer):
@@ -65,7 +65,7 @@ class FutureCompetitionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Competition
-        fields = ('id', 'title', 'image', 'category_icon', 'last_distance', 'period')
+        fields = ('id', 'title', 'image', 'category', 'last_distance', 'period')
 
 
 class ParticipantListSerializer(serializers.ModelSerializer):
@@ -117,7 +117,7 @@ class PastCompetitionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Competition
         fields = (
-            'id', 'title', 'image', 'category_icon', 'end_date', 'distances', 'participants')
+            'id', 'title', 'image', 'category', 'end_date', 'distances', 'participants')
 
 
 class ParticipantRetrieveSerializer(serializers.ModelSerializer):
