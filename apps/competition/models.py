@@ -60,6 +60,7 @@ class CompetitionMaps(BaseModel):
 class CompetitionTexts(BaseModel):
     competition = models.ForeignKey(Competition, on_delete=models.SET_NULL, null=True, blank=True,
                                     related_name="competition_texts")
+    title = models.CharField(max_length=223, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
 
 
