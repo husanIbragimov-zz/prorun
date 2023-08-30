@@ -103,24 +103,25 @@ class ParticipantListSerializer(serializers.ModelSerializer):
 
 
 class CompetitionMapsListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CompetitionMaps
-        fields = ('id', 'title')
-
-
-class PastCompetitionSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(many=False)
-    distances = CompetitionMapsListSerializer(many=True, source='competition_maps')
     participants = serializers.SerializerMethodField()
 
     def get_participants(self, obj):
         participants = Participant.objects.filter(competition_id=obj.id).order_by('duration')
         return ParticipantListSerializer(participants[:3], many=True).data
+    class Meta:
+        model = CompetitionMaps
+        fields = ('id', 'title', 'participants')
+
+
+class PastCompetitionSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(many=False)
+    distances = CompetitionMapsListSerializer(many=True, source='competition_maps')
+
 
     class Meta:
         model = Competition
         fields = (
-            'id', 'title', 'image', 'category', 'end_date', 'distances', 'participants')
+            'id', 'title', 'image', 'category', 'end_date', 'distances')
 
 
 class ParticipantRetrieveSerializer(serializers.ModelSerializer):
