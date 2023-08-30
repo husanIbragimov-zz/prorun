@@ -43,7 +43,7 @@ class BannerParticipantsSerializer(serializers.ModelSerializer):
 
 class BannerImagesSerializer(serializers.ModelSerializer):
     count = serializers.SerializerMethodField()
-    category_icon = serializers.ImageField(source='category.icon', read_only=True)
+    category = CategorySerializer(many=True)
     competition_participants = serializers.SerializerMethodField()
 
     def get_competition_participants(self, obj):
@@ -60,7 +60,7 @@ class BannerImagesSerializer(serializers.ModelSerializer):
 
 
 class FutureCompetitionSerializer(serializers.ModelSerializer):
-    category_icon = serializers.ImageField(source='category.icon', read_only=True)
+    category = CategorySerializer(many=True)
     last_distance = serializers.CharField(source='competition_maps.title', read_only=True)
 
     class Meta:
@@ -106,7 +106,7 @@ class CompetitionMapsListSerializer(serializers.ModelSerializer):
 
 
 class PastCompetitionSerializer(serializers.ModelSerializer):
-    category_icon = serializers.ImageField(source='category.icon', read_only=True)
+    category = CategorySerializer(many=True)
     distances = CompetitionMapsListSerializer(many=True, source='competition_maps')
     participants = serializers.SerializerMethodField()
 
