@@ -121,10 +121,10 @@ class CountrySerializer(serializers.ModelSerializer):
 
 
 class ParticipantUserSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(source='competition_detail.competition.title', read_only=True)
-    category_name = serializers.CharField(source='competition_detail.title', read_only=True)
-    category_icon = serializers.ImageField(source='competition_detail.competition.category.icon', read_only=True)
-    image = serializers.ImageField(source='competition_detail.image', read_only=True)
+    title = serializers.CharField(source='competition.title', read_only=True)
+    category_name = serializers.CharField(source='participant_choices.title', read_only=True)
+    category_icon = serializers.ImageField(source='competition.category.icon', read_only=True)
+    image = serializers.ImageField(source='participant_choices.maps', read_only=True)
 
     class Meta:
         model = Participant
