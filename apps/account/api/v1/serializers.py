@@ -1,8 +1,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from apps.account.models import Account, VerifyPhoneNumber, phone_regex, Country
-from apps.competition.api.v1.serializers import UserCompetitionsSerializer, CompetitionDetailAccountSerializer
-from apps.competition.models import CompetitionDetail, Participant
+from apps.competition.models import Participant
 
 
 class RegisterSerializer(serializers.ModelSerializer):

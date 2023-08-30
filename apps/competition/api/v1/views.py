@@ -1,6 +1,6 @@
 from django.db.models import Q
 from rest_framework import generics, status
-from apps.competition.models import Category, Competition, CompetitionDetail, Participant
+from apps.competition.models import Category, Competition, Participant
 from .serializers import CategorySerializer, CompetitionSerializer, CompetitionDetailSerializer, ParticipantSerializer, \
     CompetitionDetailListSerializer, ParticipantListSerializer, ParticipantDataSerializer, CompetitionListSerializer
 from django.utils import timezone
@@ -28,35 +28,35 @@ class CompetitionPresentListView(generics.ListAPIView):
         return queryset
 
 
-class CompetitionPastListView(generics.ListAPIView):
-    serializer_class = ParticipantDataSerializer
+# class CompetitionPastListView(generics.ListAPIView):
+#     serializer_class = ParticipantDataSerializer
+#
+#     def get_queryset(self):
+#         queryset = CompetitionDetail.objects.filter(competition__status='past').order_by('-id')
+#         return queryset[:2]
+#
+#
+# class CompetitionDetailListView(generics.ListAPIView):
+#     queryset = CompetitionDetail.objects.all()
+#     serializer_class = CompetitionDetailListSerializer
+#
+#
+# class CompetitionDetailRetrieveAPIView(generics.RetrieveAPIView):
+#     queryset = CompetitionDetail.objects.all()
+#     serializer_class = CompetitionDetailListSerializer
+#     lookup_field = 'pk'
 
-    def get_queryset(self):
-        queryset = CompetitionDetail.objects.filter(competition__status='past').order_by('-id')
-        return queryset[:2]
 
-
-class CompetitionDetailListView(generics.ListAPIView):
-    queryset = CompetitionDetail.objects.all()
-    serializer_class = CompetitionDetailListSerializer
-
-
-class CompetitionDetailRetrieveAPIView(generics.RetrieveAPIView):
-    queryset = CompetitionDetail.objects.all()
-    serializer_class = CompetitionDetailListSerializer
-    lookup_field = 'pk'
-
-
-class ParticipantCreateView(generics.GenericAPIView):
-    serializer_class = ParticipantSerializer
-
-    # permission_classes = ()
-    def post(self, request):
-        user = self.request.user
-        competition = request.data.get('competition_detail')
-        if CompetitionDetail.objects.filter(Q(competition=competition) & Q(competition__status='future')):
-            Participant.objects.create(competition=competition, participant=user)
-        return Response({'message': 'Error'}, status=status.HTTP_400_BAD_REQUEST)
+# class ParticipantCreateView(generics.GenericAPIView):
+#     serializer_class = ParticipantSerializer
+#
+#     # permission_classes = ()
+#     def post(self, request):
+#         user = self.request.user
+#         competition = request.data.get('competition_detail')
+#         if CompetitionDetail.objects.filter(Q(competition=competition) & Q(competition__status='future')):
+#             Participant.objects.create(competition=competition, participant=user)
+#         return Response({'message': 'Error'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ParticipantListView(generics.ListAPIView):
@@ -70,10 +70,10 @@ class ParticipantRetrieveView(generics.RetrieveAPIView):
     lookup_field = 'pk'
 
 
-class ParticipantDataListView(generics.RetrieveAPIView):
-    queryset = CompetitionDetail.objects.all()
-    serializer_class = ParticipantDataSerializer
-    lookup_field = 'pk'
+# class ParticipantDataListView(generics.RetrieveAPIView):
+#     queryset = CompetitionDetail.objects.all()
+#     serializer_class = ParticipantDataSerializer
+#     lookup_field = 'pk'
 
 
 class CompetitionCategoryListView(generics.ListAPIView):

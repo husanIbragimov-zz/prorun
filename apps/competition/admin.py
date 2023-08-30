@@ -1,15 +1,28 @@
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
-from apps.competition.models import Competition, Category, Participant, CompetitionDetail, TextDetail
+from apps.competition.models import Competition, Category, Participant, CompetitionTexts, CompetitionMaps
+
+
+class CompetitionTextsInline(admin.TabularInline):
+    model = CompetitionTexts
+    extra = 1
+
+
+class CompetitionMapsInline(admin.TabularInline):
+    model = CompetitionMaps
+    extra = 1
+
+
+class CompetitionAdmin(admin.ModelAdmin):
+    inlines = [CompetitionMapsInline, CompetitionTextsInline]
+    list_display = ('title', 'category', 'distance', 'status', 'period', 'members')
 
 
 class ParticipantAdmin(ImportExportModelAdmin):
-    list_display = ('participant', 'competition_detail', 'duration', 'overrun', 'is_active',)
+    list_display = ('user', 'competition', 'choice', 'personal_id', 'duration', 'is_active',)
     date_hierarchy = 'created_at'
     readonly_fields = ('created_at',)
 
-    class Meta:
-        model = Participant
 
 
 class ParticipantInline(admin.StackedInline):
@@ -17,31 +30,37 @@ class ParticipantInline(admin.StackedInline):
     extra = 1
 
 
-class TextDetailInline(admin.TabularInline):
-    model = TextDetail
-    extra = 1
+class CompetitionMapsAdmin(admin.ModelAdmin):
+    inlines = [ParticipantInline]
+    list_display = ('competition', 'title')
 
 
-class CompetitionDetailAdmin(admin.ModelAdmin):
-    inlines = [ParticipantInline, TextDetailInline]
-    list_display = ('competition', 'title', 'created_at', 'is_active')
-    date_hierarchy = 'created_at'
-    readonly_fields = ('created_at',)
+#
+# class CompetitionTextsInline(admin.TabularInline):
+#     model = CompetitionTexts
+#     extra = 1
+#
+#
+# class CompetitionDetailAdmin(admin.ModelAdmin):
+#     inlines = [ParticipantInline, CompetitionTextsInline]
+#     list_display = ('competition', 'title', 'created_at')
+#     date_hierarchy = 'created_at'
+#     readonly_fields = ('created_at',)
+#
+#
+# class CompetitionMapsInline(admin.StackedInline):
+#     model = CompetitionMaps
+#     extra = 1
 
 
-class CompetitionDetailInline(admin.StackedInline):
-    model = CompetitionDetail
-    extra = 1
+# class CompetitionAdmin(admin.ModelAdmin):
+#     inlines = [CompetitionMapsInline]
+#     list_display = ('title', 'category', 'distance', 'status', 'period', 'members')
+#     list_filter = ('status',)
+#     search_fields = ('title', 'category__title')
 
 
-class CompetitionAdmin(admin.ModelAdmin):
-    inlines = [CompetitionDetailInline]
-    list_display = ('title', 'category', 'distance', 'status', 'period', 'members')
-    list_filter = ('status',)
-    search_fields = ('title', 'category__title')
-
-
-admin.site.register(CompetitionDetail, CompetitionDetailAdmin)
+admin.site.register(CompetitionMaps, CompetitionMapsAdmin)
 admin.site.register(Competition, CompetitionAdmin)
 admin.site.register(Category)
 admin.site.register(Participant, ParticipantAdmin)

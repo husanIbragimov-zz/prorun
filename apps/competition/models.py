@@ -20,68 +20,60 @@ class Category(BaseModel):
 
 
 class Competition(BaseModel):
+    status = models.CharField(choices=STATUS, null=True, blank=True, max_length=6)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=223, null=True, blank=True)
+    sub_title = models.CharField(max_length=223, null=True, blank=True)
     image = models.ImageField(upload_to='competitions/', null=True, blank=True)
-    start_date = models.DateTimeField(null=True, blank=True)
-    end_date = models.DateTimeField(null=True, blank=True)
-    distance = models.CharField(max_length=223, null=True, blank=True)
-    status = models.CharField(choices=STATUS, null=True, blank=True, max_length=6)
-    period = models.CharField(max_length=223, null=True, blank=True)
-    free_places = models.CharField(max_length=223, null=True, blank=True)
-    limit = models.CharField(max_length=223, null=True, blank=True)
-    members = models.IntegerField(null=True, blank=True)
     youtube = models.URLField(null=True, blank=True)
     media = models.FileField(upload_to='video/', null=True, blank=True)
+    period = models.CharField(max_length=223, null=True, blank=True)
+    distance = models.CharField(max_length=223, null=True, blank=True)
+    members = models.IntegerField(null=True, blank=True)
+    where_is_ticket = models.URLField(null=True, blank=True)
+    limit = models.CharField(max_length=223, null=True, blank=True)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.title} - {self.status}"
 
-    def get_period(self):
+    def update_status(self):
         curr_date = datetime.now().date()
         if self.start_date > curr_date and self.end_date > curr_date:
             self.status = 'future'
-
         elif self.start_date <= curr_date and self.end_date >= curr_date:
             self.status = 'now'
-
         else:
             self.status = 'past'
         self.save()
         return "success"
 
 
-class CompetitionDetail(BaseModel):
+class CompetitionMaps(BaseModel):
     competition = models.ForeignKey(Competition, on_delete=models.SET_NULL, null=True, blank=True,
-                                    related_name='competition_details')
+                                    related_name="competition_maps")
+    maps = models.ImageField(upload_to='maps/', null=True, blank=True)
     title = models.CharField(max_length=223, null=True, blank=True)
-    image = models.ImageField(upload_to='maps/', null=True, blank=True)
-    is_active = models.BooleanField(default=True)
 
-    def __str__(self):
-        if self.title:
-            return f"{self.title}"
-        return 'No title'
+
+class CompetitionTexts(BaseModel):
+    competition = models.ForeignKey(Competition, on_delete=models.SET_NULL, null=True, blank=True,
+                                    related_name="competition_texts")
+    description = models.TextField(null=True, blank=True)
 
 
 class Participant(BaseModel):
-    competition_detail = models.ForeignKey(CompetitionDetail, on_delete=models.SET_NULL, null=True,
-                                           related_name='participants')
-    participant = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, related_name='competitions')
+    user = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True,
+                             related_name="competitions")
+    competition = models.ForeignKey(Competition, on_delete=models.SET_NULL, null=True, blank=True,
+                                    related_name="competition_participants")
+    choice = models.ForeignKey(CompetitionMaps, on_delete=models.SET_NULL, null=True, blank=True,
+                               related_name="participant_choices")
+    personal_id = models.CharField(max_length=223, null=True, blank=True)
     duration = models.TimeField(null=True, blank=True)
-    overrun = models.FloatField(null=True, blank=True)
-    personal_id = models.BigIntegerField(null=True, blank=True)
+    qr_code = models.ImageField(upload_to='qr_code/', null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.duration}"
-
-
-class TextDetail(BaseModel):
-    competition_detail = models.ForeignKey(CompetitionDetail, on_delete=models.SET_NULL, null=True,
-                                           related_name='texts')
-    title = models.CharField(max_length=223, null=True, blank=True)
-    description = models.CharField(max_length=550, null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.title}"
+        return f"{self.user.get_fullname}"
