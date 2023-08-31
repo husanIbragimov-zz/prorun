@@ -91,4 +91,6 @@ class MyCompetitionGetListView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Competition.objects.filter(Q(competition_participants__user=user), Q(status='now')).order_by('-id')
+        if user:
+            return Competition.objects.filter(Q(competition_participants__user=user), Q(status='now')).order_by('-id')
+        return Response({'message': 'Error'}, status=status.HTTP_400_BAD_REQUEST)
