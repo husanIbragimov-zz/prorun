@@ -94,3 +94,17 @@ class MyCompetitionGetListView(generics.ListAPIView):
         if user:
             return Competition.objects.filter(Q(competition_participants__user=user), Q(status='now')).order_by('-id')
         return Response({'message': 'Error'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MyOldCompetitionsListView(generics.ListAPIView):
+    serializer_class = PastCompetitionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['title', 'category__title', 'category_id']
+    filterset_class = BannerCompetitionFilter
+
+    def get_queryset(self):
+        user = self.request.user
+        if user:
+            return Competition.objects.filter(Q(competition_participants__user=user), Q(status='past')).order_by('-id')
+        return Response({'message': 'Error'}, status=status.HTTP_400_BAD_REQUEST)

@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import CategoryListView, BannerImagesListView, FutureCompetitionListView, PastCompetitionListView, \
-    ParticipantRetrieveView, CompetitionDetailRetrieveAPIView, JoinToCompetitionCreateView, MyCompetitionGetListView
+    ParticipantRetrieveView, CompetitionDetailRetrieveAPIView, JoinToCompetitionCreateView, MyCompetitionGetListView, \
+    MyOldCompetitionsListView
 
 urlpatterns = [
     path('category/', CategoryListView.as_view()),
@@ -11,4 +12,5 @@ urlpatterns = [
     path('detail/<int:pk>/', CompetitionDetailRetrieveAPIView.as_view()),
     path('join/<int:choice_id>/', JoinToCompetitionCreateView.as_view()),
     path('my-competitions/', MyCompetitionGetListView.as_view()),
+    path('my-old-competitions/', MyOldCompetitionsListView.as_view()),
 ]
