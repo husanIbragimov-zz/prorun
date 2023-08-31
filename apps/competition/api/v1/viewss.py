@@ -40,7 +40,7 @@ class FutureCompetitionListView(generics.ListAPIView):
 
 
 class PastCompetitionListView(generics.ListAPIView):
-    queryset = Competition.objects.filter(status='past').order_by('-id')[0:3]
+    queryset = Competition.objects.filter(status='past').order_by('-id')
     serializer_class = PastCompetitionSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'category__title', 'category_id']

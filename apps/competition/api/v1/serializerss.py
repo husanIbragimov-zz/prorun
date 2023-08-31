@@ -45,9 +45,6 @@ class BannerImagesSerializer(serializers.ModelSerializer):
     category = CategorySerializer(many=False)
     competition_participants = serializers.SerializerMethodField()
 
-    # def get_category(self, obj):
-    #     return CategorySerializer(obj.category).data
-
     def get_competition_participants(self, obj):
         request = self.context.get('request')
         return BannerParticipantsSerializer(obj.competition_participants.all(), context={'request': request},
@@ -63,7 +60,7 @@ class BannerImagesSerializer(serializers.ModelSerializer):
 
 class FutureCompetitionSerializer(serializers.ModelSerializer):
     category = CategorySerializer(many=False)
-    last_distance = serializers.CharField(source='competition_maps.title', read_only=True)
+    last_distance = serializers.CharField(source='competition_maps.last.title', read_only=True)
 
     class Meta:
         model = Competition
@@ -72,7 +69,7 @@ class FutureCompetitionSerializer(serializers.ModelSerializer):
 
 class ParticipantListSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='user.get_fullname', read_only=True)
-    flag = serializers.ImageField(source='user.address.flag', read_only=True)
+    flag = serializers.URLField(source='user.address.flag', read_only=True)
     avatar = serializers.ImageField(source='user.avatar', read_only=True)
 
     class Meta:

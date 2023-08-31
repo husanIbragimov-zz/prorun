@@ -4,11 +4,10 @@ from apps.competition.models import Competition, Category
 
 
 class BannerCompetitionFilter(django_filters.rest_framework.FilterSet):
-    category = django_filters.CharFilter(method='filter_category')
-
-    def filter_category(self, queryset, name, value):
-        return queryset.filter(Q(category__title__icontains=value) | Q(category_id=value))
+    title = django_filters.CharFilter(field_name="title", lookup_expr='icontains')
+    category = django_filters.CharFilter(field_name="category__title", lookup_expr='icontains')
+    category_id = django_filters.NumberFilter(field_name="category_id", lookup_expr='exact')
 
     class Meta:
         model = Competition
-        fields = ('category',)
+        fields = ('title', 'category', 'category_id')

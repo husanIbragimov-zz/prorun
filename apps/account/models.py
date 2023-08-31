@@ -42,7 +42,7 @@ GENDER = (
 
 class Country(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
-    flag = models.ImageField(upload_to='media/countries/', null=True, blank=True)
+    flag = models.URLField(null=True, blank=True)
 
     def __str__(self):
         return self.name
