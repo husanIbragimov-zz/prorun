@@ -189,5 +189,5 @@ class MyCompetitionsRetrieveView(generics.ListAPIView):
 class CountryListView(generics.ListAPIView):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
-    search_fields = ['name__icontains']
+    search_fields = ['name']
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
