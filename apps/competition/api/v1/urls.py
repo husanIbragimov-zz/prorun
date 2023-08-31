@@ -1,10 +1,6 @@
 from django.urls import path
-# from .views import CategoryListView, CompetitionFutureListView, CompetitionPresentListView, \
-#     ParticipantListView, ParticipantRetrieveView, CompetitionCategoryRetrieveView, \
-#     CompetitionCategoryListView
-
-from .viewss import CategoryListView, BannerImagesListView, FutureCompetitionListView, PastCompetitionListView, \
-    ParticipantRetrieveView, CompetitionDetailRetrieveAPIView, JoinToCompetitionCreateView
+from .views import CategoryListView, BannerImagesListView, FutureCompetitionListView, PastCompetitionListView, \
+    ParticipantRetrieveView, CompetitionDetailRetrieveAPIView, JoinToCompetitionCreateView, MyCompetitionGetListView
 
 urlpatterns = [
     path('category/', CategoryListView.as_view()),
@@ -14,11 +10,5 @@ urlpatterns = [
     path('participant/<int:choice_id>/', ParticipantRetrieveView.as_view()),
     path('detail/<int:pk>/', CompetitionDetailRetrieveAPIView.as_view()),
     path('join/<int:choice_id>/', JoinToCompetitionCreateView.as_view()),
-    # path('detail/', CompetitionDetailListView.as_view()),
-    # path('detail/<int:pk>/', CompetitionDetailRetrieveAPIView.as_view()),
-
-    # path('register/participant/', ParticipantCreateView.as_view()),
-    # path('participants/<int:pk>/', ParticipantDataListView.as_view()),
-    # path('competition_category/<int:pk>/', CompetitionCategoryRetrieveView.as_view()),
-    # path('competition_category/', CompetitionCategoryListView.as_view()),
+    path('my-competitions/', MyCompetitionGetListView.as_view()),
 ]
