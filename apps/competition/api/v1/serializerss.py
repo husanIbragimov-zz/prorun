@@ -50,7 +50,7 @@ class BannerImagesSerializer(serializers.ModelSerializer):
 
     def get_competition_participants(self, obj):
         request = self.context.get('request')
-        return BannerParticipantsSerializer(obj.competition_participants.all()[:3], context={'request': request},
+        return BannerParticipantsSerializer(obj.competition_participants.all(), context={'request': request},
                                             many=True).data
 
     def get_count(self, obj):

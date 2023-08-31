@@ -1,13 +1,16 @@
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, status, permissions
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics, status, permissions, filters
 from rest_framework.response import Response
 
-from apps.competition.models import Category, Competition, CompetitionTexts, CompetitionMaps, Participant
+from apps.competition.models import Category, Competition, CompetitionMaps, Participant
 
 from .serializerss import CategorySerializer, BannerImagesSerializer, FutureCompetitionSerializer, \
-    PastCompetitionSerializer, ParticipantListSerializer, CompetitionDetailSerializer, \
-    JoinToCompetitionCreateSerializer, CompetitionMapsUserListSerializer
+    PastCompetitionSerializer, CompetitionDetailSerializer, JoinToCompetitionCreateSerializer, \
+    CompetitionMapsUserListSerializer
+
+from .filters import BannerCompetitionFilter
 
 
 class CategoryListView(generics.ListAPIView):
@@ -18,6 +21,9 @@ class CategoryListView(generics.ListAPIView):
 class BannerImagesListView(generics.ListAPIView):
     queryset = Competition.objects.all()
     serializer_class = BannerImagesSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['title', 'category__title', 'category_id']
+    filterset_class = BannerCompetitionFilter
 
     def get(self, request, *args, **kwargs):
         queryset = self.queryset.filter(Q(status='now')).order_by('-id')
@@ -28,11 +34,17 @@ class BannerImagesListView(generics.ListAPIView):
 class FutureCompetitionListView(generics.ListAPIView):
     queryset = Competition.objects.filter(status='future').order_by('-id')
     serializer_class = FutureCompetitionSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['title', 'category__title', 'category_id']
+    filterset_class = BannerCompetitionFilter
 
 
 class PastCompetitionListView(generics.ListAPIView):
     queryset = Competition.objects.filter(status='past').order_by('-id')[0:3]
     serializer_class = PastCompetitionSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['title', 'category__title', 'category_id']
+    filterset_class = BannerCompetitionFilter
 
 
 class ParticipantRetrieveView(generics.ListAPIView):
