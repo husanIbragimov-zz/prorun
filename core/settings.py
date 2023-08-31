@@ -35,6 +35,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -212,4 +213,79 @@ SIMPLE_JWT = {
     "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
+}
+
+JAZZMIN_SETTINGS = {
+    # title of the window
+    'site_title': 'Prorun Admin',
+
+    # Title on the login screen
+    'site_header': 'Prorun',
+    "site_brand": "Prorun ADMIN",
+
+    # Relative path to a favicon for your site, will default to site_logo if absent (ideally 32x32 px)
+    "site_icon": None,
+
+    # square logo to use for your site, must be present in static files, used for favicon and brand on top left
+    'site_logo': None,
+
+    "login_logo": None,
+    "login_logo_dark": None,
+
+    # Welcome text on the login screen
+    'welcome_sign': 'Welcome to Prorun',
+
+    # Copyright on the footer
+    'copyright': 'Amal Group',
+
+    # The model admin to search from the search bar, search bar omitted if excluded
+    'search_model': ['auth.User', 'auth.Group', 'auth.Permission', 'account.Account', 'competition.Participant'],
+
+    # Field name on user model that contains avatar image
+    'user_avatar': None,
+
+    # Links to put along the top menu
+    'topmenu_links': [
+
+        # Url that gets reversed (Permissions can be added)
+        {'name': 'Home', 'url': 'admin:index', 'permissions': ['auth.view_user']},
+
+        # external url that opens in a new window (Permissions can be added)
+        {'name': 'Support', 'url': 'https://t.me/husandev', 'new_window': True},
+
+        # model admin to link to (Permissions checked against model)
+        {'model': 'auth.User'},
+
+        # App with dropdown menu to all its models pages (Permissions checked against models)
+        {'app': 'polls'},
+    ],
+
+    # Whether to display the side menu
+    'show_sidebar': True,
+
+    # Whether to aut expand the menu
+    'navigation_expanded': True,
+
+    # Hide these apps when generating side menu
+    'hide_apps': [],
+
+    # Hide these models when generating side menu
+    'hide_models': [],
+
+    # List of apps to base side menu ordering off of
+    'order_with_respect_to': ['accounts', 'polls'],
+
+    # Custom links to append to app groups, keyed on app name
+    'custom_links': {
+        'users': [{
+            'name': 'Make Messages', 'url': 'user', 'icon': 'fa-comments',
+            'permissions': ['polls.view_polls']
+        }]
+    },
+
+    # Custom icons per model in the side menu See https://www.fontawesomecheatsheet.com/font-awesome-cheatsheet-5x/
+    # for a list of icon classes
+    'icons': {
+        'auth.user': 'fa-user',
+    }
 }
