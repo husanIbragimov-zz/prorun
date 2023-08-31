@@ -10,7 +10,7 @@ from apps.account.models import Account, VerifyPhoneNumber, Country
 from .permissions import IsOwnUserOrReadOnly
 from .serializers import RegisterSerializer, LoginSerializer, VerifyPhoneNumberRegisterSerializer, \
     VerifyPhoneNumberSerializer, ChangePasswordSerializer, AccountProfileSerializer, AboutMeSerializer, \
-    MyCompetitionsSerializer, CountrySerializer
+    MyCompetitionsHistorySerializer, CountrySerializer
 from rest_framework.response import Response
 
 from .utils import verify
@@ -176,14 +176,13 @@ def me(request):
     return Response(sz.data)
 
 
-class MyCompetitionsRetrieveView(generics.ListAPIView):
+class MyCompetitionsHistoryListView(generics.RetrieveAPIView):
     queryset = Account.objects.all()
-    serializer_class = MyCompetitionsSerializer
+    serializer_class = MyCompetitionsHistorySerializer
     permission_classes = (IsOwnUserOrReadOnly,)
+    lookup_field = 'pk'
 
-    def get_queryset(self):
-        user = self.request.user
-        return self.queryset.filter(id=user.id)
+
 
 
 class CountryListView(generics.ListAPIView):

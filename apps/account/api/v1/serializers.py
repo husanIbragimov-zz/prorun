@@ -132,7 +132,7 @@ class ParticipantUserSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'category_name', 'category_icon', 'image', 'duration', 'created_at')
 
 
-class MyCompetitionsSerializer(serializers.ModelSerializer):
+class MyCompetitionsHistorySerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='get_fullname', read_only=True)
     competitions = ParticipantUserSerializer(many=True)
     address = CountrySerializer(many=False)
