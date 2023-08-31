@@ -187,3 +187,4 @@ class MyCompetitionsRetrieveView(generics.ListAPIView):
 class CountryListView(generics.ListAPIView):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
+    search_fields = ['name__icontains']
