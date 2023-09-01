@@ -123,7 +123,7 @@ class CountrySerializer(serializers.ModelSerializer):
 
 class ParticipantUserSerializer(serializers.ModelSerializer):
     title = serializers.CharField(source='competition.title', read_only=True)
-    category_name = serializers.CharField(source='participant_choices.title', read_only=True)
+    category_name = serializers.CharField(source='choice.title', read_only=True)
     category_icon = serializers.ImageField(source='competition.category.icon', read_only=True)
     image = serializers.ImageField(source='choice.maps', read_only=True)
 
