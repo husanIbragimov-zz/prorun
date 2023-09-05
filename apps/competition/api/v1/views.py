@@ -22,10 +22,14 @@ class BannerImagesListView(generics.ListAPIView):
     queryset = Competition.objects.all()
     serializer_class = BannerImagesSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['title', 'category__title', 'category_id']
     filterset_class = BannerCompetitionFilter
 
     def get(self, request, *args, **kwargs):
+        category_id = self.request.query_params.get('category_id')
+        if category_id:
+            queryset = self.queryset.filter(Q(status='now'), Q(category_id=category_id)).order_by('-id')
+            serializer = self.serializer_class(queryset, many=True, context={'request': request})
+            return Response(serializer.data)
         queryset = self.queryset.filter(Q(status='now')).order_by('-id')
         serializer = self.serializer_class(queryset, many=True, context={'request': request})
         return Response(serializer.data)

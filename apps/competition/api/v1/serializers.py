@@ -122,14 +122,22 @@ class CompetitionMapsListSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'participants')
 
 
+class CompetitionMapssTitleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompetitionMaps
+        fields = ('id', 'title')
+
+
 class PastCompetitionSerializer(serializers.ModelSerializer):
     category = CategorySerializer(many=False)
     distances = CompetitionMapsListSerializer(many=True, source='competition_maps')
+    competition_title = CompetitionMapssTitleSerializer(many=True, source='competition_maps')
 
     class Meta:
         model = Competition
         fields = (
-            'id', 'title', 'image', 'category', 'end_date', 'distances')
+            'id', 'title', 'image', 'category', 'end_date', 'competition_title', 'distances'
+        )
 
 
 class ParticipantRetrieveSerializer(serializers.ModelSerializer):
