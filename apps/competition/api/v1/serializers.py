@@ -160,7 +160,7 @@ class CompetitionMapImagesSerializer(serializers.ModelSerializer):
     participants = serializers.SerializerMethodField()
 
     def get_participants(self, obj):
-        participants = Participant.objects.filter(competition_id=obj.id).order_by('duration')
+        participants = Participant.objects.filter(choice_id=obj.id).order_by('duration')
         return ParticipantListSerializer(participants[:3], many=True).data
 
     class Meta:
