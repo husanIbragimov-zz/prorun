@@ -5,7 +5,7 @@ from apps.competition.models import Category, Competition, CompetitionMaps, Part
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ('id', 'title', 'icon')
+        fields = ('id', 'title', 'icon', 'svg')
 
 
 class CompetitionTextsSerializer(serializers.ModelSerializer):

@@ -13,6 +13,7 @@ STATUS = (
 class Category(BaseModel):
     title = models.CharField(max_length=223, null=True, blank=True)
     icon = models.ImageField(upload_to='categories/', null=True, blank=True)
+    svg = models.CharField(max_length=223, null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):

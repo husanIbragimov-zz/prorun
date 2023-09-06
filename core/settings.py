@@ -239,7 +239,7 @@ JAZZMIN_SETTINGS = {
     'copyright': 'Amal Group',
 
     # The model admin to search from the search bar, search bar omitted if excluded
-    'search_model': ['auth.User', 'auth.Group', 'auth.Permission', 'account.Account', 'competition.Participant'],
+    'search_model': ['auth.User', 'account.Account'],
 
     # Field name on user model that contains avatar image
     'user_avatar': None,
