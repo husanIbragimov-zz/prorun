@@ -112,6 +112,7 @@ class CompetitionMapsUserListSerializer(serializers.ModelSerializer):
 
 class CompetitionMapsListSerializer(serializers.ModelSerializer):
     participants = serializers.SerializerMethodField()
+    svg = serializers.CharField(source='competition.category.svg', read_only=True)
 
     def get_participants(self, obj):
         participants = Participant.objects.filter(choice_id=obj.id).order_by('duration')
@@ -119,7 +120,7 @@ class CompetitionMapsListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CompetitionMaps
-        fields = ('id', 'title', 'participants')
+        fields = ('id', 'title', 'svg', 'participants')
 
 
 class CompetitionMapssTitleSerializer(serializers.ModelSerializer):
