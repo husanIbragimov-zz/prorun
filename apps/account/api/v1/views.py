@@ -186,7 +186,7 @@ class MyCompetitionsHistoryListView(generics.RetrieveAPIView):
 
 
 class CountryListView(generics.ListAPIView):
-    queryset = Country.objects.all()
+    queryset = Country.objects.all().order_by('name')
     serializer_class = CountrySerializer
     search_fields = ['name']
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
