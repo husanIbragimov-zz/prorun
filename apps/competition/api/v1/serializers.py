@@ -170,6 +170,7 @@ class CompetitionMapImagesSerializer(serializers.ModelSerializer):
 
 class CompetitionDetailSerializer(serializers.ModelSerializer):
     category_icon = serializers.ImageField(source='category.icon', read_only=True)
+    category_svg = serializers.CharField(source='category.svg', read_only=True)
     competition_texts = CompetitionTextsSerializer(many=True)
     competition_maps = CompetitionMapImagesSerializer(many=True)
     joiners_count = serializers.SerializerMethodField()
@@ -187,9 +188,10 @@ class CompetitionDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Competition
         fields = (
-            'id', 'title', 'sub_title', 'youtube', 'media', 'category_icon', 'competition_maps', 'period', 'distance',
-            'members', 'joiners_count', 'free_joiners_count',
-            'where_is_ticket', 'limit', 'competition_texts')
+            'id', 'title', 'sub_title', 'youtube', 'media', 'category_icon', 'category_svg', 'competition_maps',
+            'period', 'distance', 'members', 'joiners_count', 'free_joiners_count', 'where_is_ticket', 'limit',
+            'competition_texts'
+        )
 
 
 class JoinToCompetitionCreateSerializer(serializers.ModelSerializer):
