@@ -167,7 +167,7 @@ class CompetitionMapImagesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CompetitionMaps
-        fields = ('id', 'title', 'maps', 'participants')
+        fields = ('id', 'title', 'maps', 'svg', 'participants')
 
 
 class CompetitionDetailSerializer(serializers.ModelSerializer):
