@@ -62,8 +62,8 @@ class ParticipantRetrieveView(generics.ListAPIView):
         q = self.request.query_params.get('search', None)
         if q:
             return self.queryset.filter(
-                Q(competition_id=choice_id) & Q(participant_choices__user__first_name__icontains=q) | Q(
-                    participant_choices__user__last_name__icontains=q)).order_by('participant_choices__position')
+                Q(competition_id=choice_id) & Q(participant_choices__user__first_name__contains=q) | Q(
+                    participant_choices__user__last_name__contains=q)).order_by('participant_choices__position')
         return self.queryset.filter(Q(competition_id=choice_id)).order_by('participant_choices__position')
 
 
