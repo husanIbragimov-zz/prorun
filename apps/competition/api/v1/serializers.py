@@ -105,7 +105,7 @@ class CompetitionMapsUserListSerializer(serializers.ModelSerializer):
     def get_participants(self, obj):
         participants = Participant.objects.filter(choice_id=obj.id).order_by('duration')
         for i in participants:
-            i.position += i
+            i.position = i
             i.save()
         return ParticipantListSerializer(participants, many=True).data
 
