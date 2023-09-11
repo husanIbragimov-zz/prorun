@@ -54,11 +54,17 @@ class PastCompetitionListView(generics.ListAPIView):
 class ParticipantRetrieveView(generics.ListAPIView):
     queryset = CompetitionMaps.objects.all()
     serializer_class = CompetitionMapsUserListSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     lookup_field = 'choice_id'
 
     def get_queryset(self):
         choice_id = self.kwargs['choice_id']
-        return self.queryset.filter(Q(competition_id=choice_id))
+        q = self.request.query_params.get('search', None)
+        if q:
+            return self.queryset.filter(
+                Q(competition_id=choice_id) & Q(participant_choices__user__first_name__icontains=q) | Q(
+                    participant_choices__user__last_name__icontains=q)).order_by('participant_choices__position')
+        return self.queryset.filter(Q(competition_id=choice_id)).order_by('participant_choices__position')
 
 
 class CompetitionDetailRetrieveAPIView(generics.RetrieveAPIView):

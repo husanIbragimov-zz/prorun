@@ -72,6 +72,8 @@ class Participant(BaseModel):
                                     related_name="competition_participants")
     choice = models.ForeignKey(CompetitionMaps, on_delete=models.SET_NULL, null=True, blank=True,
                                related_name="participant_choices")
+    distance = models.CharField(max_length=50, null=True, blank=True)
+    position = models.IntegerField(null=True, blank=True)
     personal_id = models.CharField(max_length=223, null=True, blank=True)
     duration = models.TimeField(null=True, blank=True)
     qr_code = models.ImageField(upload_to='qr_code/', null=True, blank=True)

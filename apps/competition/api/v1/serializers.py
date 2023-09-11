@@ -23,7 +23,7 @@ class CompetitionMapsSerializer(serializers.ModelSerializer):
 class ParticipantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Participant
-        fields = ('id', 'user', 'choice', 'personal_id', 'duration')
+        fields = ('id', 'position', 'user', 'choice', 'personal_id', 'distance', 'duration')
 
 
 class BannerParticipantsSerializer(serializers.ModelSerializer):
@@ -74,7 +74,7 @@ class ParticipantListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Participant
-        fields = ('id', 'full_name', 'avatar', 'flag', 'personal_id', 'duration')
+        fields = ('id', 'position', 'full_name', 'avatar', 'flag', 'personal_id', 'distance', 'duration')
 
     def get_smallest_duration(self, participants):
         smallest_duration = None
@@ -100,6 +100,7 @@ class ParticipantListSerializer(serializers.ModelSerializer):
 
 class CompetitionMapsUserListSerializer(serializers.ModelSerializer):
     participants = serializers.SerializerMethodField()
+    svg = serializers.CharField(source='competition.category.svg', read_only=True)
 
     def get_participants(self, obj):
         participants = Participant.objects.filter(choice_id=obj.id).order_by('duration')
@@ -107,7 +108,7 @@ class CompetitionMapsUserListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CompetitionMaps
-        fields = ('id', 'title', 'participants')
+        fields = ('id', 'title', 'svg', 'participants')
 
 
 class CompetitionMapsListSerializer(serializers.ModelSerializer):
