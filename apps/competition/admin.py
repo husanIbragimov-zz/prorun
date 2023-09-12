@@ -3,6 +3,7 @@ from import_export.admin import ImportExportModelAdmin
 from apps.competition.models import Competition, Category, Participant, CompetitionTexts, CompetitionMaps
 from apps.competition.api.v1.qrcode import generate_qrcode
 import qrcode
+import os
 
 
 class CompetitionTextsInline(admin.TabularInline):
@@ -27,7 +28,6 @@ class CompetitionAdmin(admin.ModelAdmin):
 #     readonly_fields = ('created_at',)
 
 
-
 class ParticipantInline(admin.StackedInline):
     model = Participant
     extra = 1
@@ -50,15 +50,15 @@ class ParticipantAdmin(ImportExportModelAdmin):
                 qr_img = qrcode.make(f"{participant.user.first_name} {participant.user.last_name}")
                 qr_code_path = f"qr-img-{participant.id}.jpg"
                 qr_img.save(qr_code_path)
-                participant.qr_code = qr_code_path
+                participant.qr_code.save(qr_code_path, qr_img)
                 participant.save()
+                os.remove(qr_code_path)
+
                 self.message_user(request, f"Generated QR code for {participant.user.id}")
             else:
                 self.message_user(request, f"QR code already generated for {participant.user.id}")
 
     generate_qrcodes.short_description = "Generate QR codes for selected participants"
-
-
 
 
 admin.site.register(CompetitionMaps, CompetitionMapsAdmin)
