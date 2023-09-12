@@ -192,7 +192,7 @@ class CompetitionDetailSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'title', 'sub_title', 'youtube', 'media', 'category_icon', 'competition_maps',
             'period', 'distance', 'members', 'joiners_count', 'free_joiners_count', 'where_is_ticket', 'limit',
-            'competition_texts'
+            'competition_texts', 'partners'
         )
 
 

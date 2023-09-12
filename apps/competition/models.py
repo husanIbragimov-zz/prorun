@@ -2,6 +2,7 @@ from django.db import models
 from apps.account.models import Account
 from apps.base.models import BaseModel
 from datetime import datetime
+from apps.main.models import Partner
 
 STATUS = (
     ('future', 'Future'),
@@ -33,6 +34,7 @@ class Competition(BaseModel):
     members = models.IntegerField(null=True, blank=True)
     where_is_ticket = models.URLField(null=True, blank=True)
     limit = models.CharField(max_length=223, null=True, blank=True)
+    partners = models.ManyToManyField(Partner, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
 
