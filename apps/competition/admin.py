@@ -35,7 +35,7 @@ class ParticipantInline(admin.StackedInline):
 
 class CompetitionMapsAdmin(admin.ModelAdmin):
     inlines = [ParticipantInline]
-    list_display = ('competition', 'title')
+    list_display = ('competition', 'title', 'set_position')
 
 
 class ParticipantAdmin(ImportExportModelAdmin):

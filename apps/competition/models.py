@@ -59,12 +59,27 @@ class CompetitionMaps(BaseModel):
     maps = models.ImageField(upload_to='maps/', null=True, blank=True)
     title = models.CharField(max_length=223, null=True, blank=True)
 
+    @property
+    def set_position(self):
+        qs = self.participant_choices.filter(choice_id=self.id).order_by('duration')
+        counter = 0
+        for i in qs:
+            i.position = counter + 1
+            i.save()
+        return qs
+
+    def __str__(self):
+        return self.title
+
 
 class CompetitionTexts(BaseModel):
     competition = models.ForeignKey(Competition, on_delete=models.SET_NULL, null=True, blank=True,
                                     related_name="competition_texts")
     title = models.CharField(max_length=223, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.title
 
 
 class Participant(BaseModel):
