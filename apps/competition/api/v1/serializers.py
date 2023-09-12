@@ -72,10 +72,19 @@ class ParticipantListSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='user.get_fullname', read_only=True)
     flag = serializers.URLField(source='user.address.flag', read_only=True)
     avatar = serializers.ImageField(source='user.avatar', read_only=True)
+    position = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Participant
         fields = ('id', 'position', 'full_name', 'avatar', 'flag', 'personal_id', 'distance', 'duration')
+
+    def to_representation(self, instance):
+        data = super(ParticipantListSerializer, self).to_representation(instance)
+        if self.get_smallest_duration(instance.choice.participant_choices.all()) == instance.duration:
+            data['position'] = 1
+        else:
+            data['position'] = None
+        return data
 
     def get_smallest_duration(self, participants):
         smallest_duration = None
