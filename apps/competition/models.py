@@ -64,7 +64,8 @@ class CompetitionMaps(BaseModel):
         qs = self.participant_choices.filter(choice_id=self.id).order_by('duration')
         counter = 0
         for i in qs:
-            i.position = counter + 1
+            counter += 1
+            i.position = counter
             i.save()
         return qs
 
