@@ -179,6 +179,18 @@ class CompetitionDetailSerializer(serializers.ModelSerializer):
     joiners_count = serializers.SerializerMethodField()
     free_joiners_count = serializers.SerializerMethodField()
     partners = PartnerSerializer(many=True)
+    is_joined = serializers.SerializerMethodField()
+
+    def get_is_joined(self, obj):
+        request = self.context.get('request')
+        if request:
+            user = request.user
+            if user.is_authenticated:
+                if obj.competition_participants.filter(user=user).exists():
+                    return True
+                return False
+            return False
+        return False
 
 
     def get_joiners_count(self, obj):
@@ -195,7 +207,7 @@ class CompetitionDetailSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'title', 'sub_title', 'youtube', 'media', 'category_icon', 'competition_maps',
             'period', 'distance', 'members', 'joiners_count', 'free_joiners_count', 'where_is_ticket', 'limit',
-            'competition_texts', 'partners'
+            'competition_texts', 'partners', 'is_joined'
         )
 
 
