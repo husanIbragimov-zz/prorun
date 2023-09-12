@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from apps.competition.models import Category, Competition, CompetitionMaps, Participant, CompetitionTexts
+from apps.main.api.v1.serializers import PartnerSerializer
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -177,10 +178,7 @@ class CompetitionDetailSerializer(serializers.ModelSerializer):
     competition_maps = CompetitionMapImagesSerializer(many=True)
     joiners_count = serializers.SerializerMethodField()
     free_joiners_count = serializers.SerializerMethodField()
-    partners = serializers.SerializerMethodField()
-
-    def get_partners(self, obj):
-        return obj.partners.values_list('logo', flat=True)
+    partners = PartnerSerializer(many=True)
 
 
     def get_joiners_count(self, obj):
