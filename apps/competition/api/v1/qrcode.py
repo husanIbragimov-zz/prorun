@@ -19,9 +19,18 @@ def generate_qrcode():
 
 
 def check_qrcode(participant):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
     if not participant.qr_code:
-        qr_img = qrcode.make(
-            f"{participant.competition.title} - {participant.choice.title}\n{participant.user.first_name} {participant.user.last_name}\nID: {participant.id}".encode('utf-8'))
+        qr.add_data(
+            f"{participant.competition.title} - {participant.choice.title}\n{participant.user.first_name} {participant.user.last_name}\nID: {participant.id}".encode('utf-8')
+        )
+        qr.make(fit=True)
+        qr_img = qr.make_image(fill_color="black", back_color="white")
         qr_code_path = f"qr-img-{participant.id}.jpg"
         qr_img.save(qr_code_path)
         participant.qr_code.save(qr_code_path, open(qr_code_path, 'rb'), save=True)
