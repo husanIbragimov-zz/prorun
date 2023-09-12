@@ -177,6 +177,11 @@ class CompetitionDetailSerializer(serializers.ModelSerializer):
     competition_maps = CompetitionMapImagesSerializer(many=True)
     joiners_count = serializers.SerializerMethodField()
     free_joiners_count = serializers.SerializerMethodField()
+    partners = serializers.SerializerMethodField()
+
+    def get_partners(self, obj):
+        return obj.partners.values_list('logo', flat=True)
+
 
     def get_joiners_count(self, obj):
         return obj.competition_participants.count()
