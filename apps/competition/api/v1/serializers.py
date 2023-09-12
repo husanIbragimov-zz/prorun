@@ -192,7 +192,6 @@ class CompetitionDetailSerializer(serializers.ModelSerializer):
             return False
         return False
 
-
     def get_joiners_count(self, obj):
         return obj.competition_participants.count()
 

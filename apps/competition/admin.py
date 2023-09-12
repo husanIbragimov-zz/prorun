@@ -40,7 +40,8 @@ class CompetitionMapsAdmin(admin.ModelAdmin):
 
 class ParticipantAdmin(ImportExportModelAdmin):
     list_display = ('user', 'competition')
-
+    search_fields = ('competition__title', 'choice__title', 'user__first_name', 'user__last_name')
+    list_filter = ('choice',)
     actions = ['generate_qrcodes']
 
     def generate_qrcodes(self, request, queryset):
