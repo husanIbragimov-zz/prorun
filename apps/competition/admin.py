@@ -47,10 +47,11 @@ class ParticipantAdmin(ImportExportModelAdmin):
     def generate_qrcodes(self, request, queryset):
         for participant in queryset:
             if not participant.qr_code:
-                qr_img = qrcode.make(f"{participant.user.first_name} {participant.user.last_name}")
+                qr_img = qrcode.make(
+                    f"{participant.choice}\n {participant.user.first_name} {participant.user.last_name}\n {participant.id}")
                 qr_code_path = f"qr-img-{participant.id}.jpg"
                 qr_img.save(qr_code_path)
-                participant.qr_code.save(qr_code_path, qr_img)
+                participant.qr_code.save(qr_code_path, open(qr_code_path, 'rb'), save=True)
                 participant.save()
                 os.remove(qr_code_path)
 
