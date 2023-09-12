@@ -1,14 +1,16 @@
 from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status, permissions, filters
 from rest_framework.response import Response
 
 from apps.competition.models import Category, Competition, CompetitionMaps, Participant
+from .qrcode import check_qrcode
 
 from .serializers import CategorySerializer, BannerImagesSerializer, FutureCompetitionSerializer, \
     PastCompetitionSerializer, CompetitionDetailSerializer, JoinToCompetitionCreateSerializer, \
-    CompetitionMapsUserListSerializer
+    CompetitionMapsUserListSerializer, ParticipantQRCodeSerializer
 
 from .filters import BannerCompetitionFilter
 
@@ -118,3 +120,17 @@ class MyOldCompetitionsListView(generics.ListAPIView):
         if user:
             return Competition.objects.filter(Q(competition_participants__user=user), Q(status='past')).order_by('-id')
         return Response({'message': 'Error'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ParticipantQRCodeView(generics.RetrieveAPIView):
+    queryset = Participant.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'competition_id'
+    serializer_class = ParticipantQRCodeSerializer
+
+    def get_object(self):
+        participant = self.queryset.filter(user=self.request.user, competition_id=self.kwargs['competition_id']).first()
+        if not participant:
+            raise Http404
+        check_qrcode(participant)
+        return participant

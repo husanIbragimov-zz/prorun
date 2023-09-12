@@ -220,3 +220,9 @@ class MyCompetitionListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Competition
         fields = ('id', 'title', 'image', 'category', 'distance', 'period')
+
+
+class ParticipantQRCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Participant
+        fields = ('id', 'qr_code')

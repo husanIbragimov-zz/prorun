@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import CategoryListView, BannerImagesListView, FutureCompetitionListView, PastCompetitionListView, \
     ParticipantRetrieveView, CompetitionDetailRetrieveAPIView, JoinToCompetitionCreateView, MyCompetitionGetListView, \
-    MyOldCompetitionsListView
+    MyOldCompetitionsListView, ParticipantQRCodeView
 
 urlpatterns = [
     path('category/', CategoryListView.as_view()),
@@ -13,4 +13,6 @@ urlpatterns = [
     path('join/<int:choice_id>/', JoinToCompetitionCreateView.as_view()),
     path('my-competitions/', MyCompetitionGetListView.as_view()),
     path('my-old-competitions/', MyOldCompetitionsListView.as_view()),
+
+    path('participant/qrcode/<int:competition_id>/', ParticipantQRCodeView.as_view(), name='user_qrcode'),
 ]
