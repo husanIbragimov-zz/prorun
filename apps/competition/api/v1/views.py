@@ -10,7 +10,7 @@ from .qrcode import check_qrcode
 
 from .serializers import CategorySerializer, BannerImagesSerializer, FutureCompetitionSerializer, \
     PastCompetitionSerializer, CompetitionDetailSerializer, JoinToCompetitionCreateSerializer, \
-    CompetitionMapsUserListSerializer, ParticipantQRCodeSerializer
+    CompetitionMapsUserListSerializer, ParticipantQRCodeSerializer, ChoiceParticipantSerializer, ChoiceSerializer
 
 from .filters import BannerCompetitionFilter
 
@@ -51,6 +51,25 @@ class PastCompetitionListView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'category__title', 'category_id']
     filterset_class = BannerCompetitionFilter
+
+
+class ChoiceListView(generics.ListAPIView):
+    queryset = CompetitionMaps.objects.all()
+    serializer_class = ChoiceSerializer
+
+    def get_queryset(self):
+        competition_id = self.kwargs['competition_id']
+        return self.queryset.filter(competition_id=competition_id)
+
+
+class ChoiceParticipantListView(generics.ListAPIView):
+    queryset = Participant.objects.filter(is_active=True)
+    serializer_class = ChoiceParticipantSerializer
+
+    def get_queryset(self):
+        choice_id = self.kwargs['choice_id']
+        competition_id = self.kwargs['competition_id']
+        return self.queryset.filter(choice_id=choice_id, competition_id=competition_id).order_by('duration')
 
 
 class ParticipantRetrieveView(generics.ListAPIView):

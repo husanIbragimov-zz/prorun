@@ -99,6 +99,22 @@ class ParticipantListSerializer(serializers.ModelSerializer):
             return None
 
 
+class ChoiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompetitionMaps
+        fields = ('id', 'title')
+
+
+class ChoiceParticipantSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(source='user.get_fullname', read_only=True)
+    flag = serializers.URLField(source='user.address.flag', read_only=True)
+    avatar = serializers.ImageField(source='user.avatar', read_only=True)
+
+    class Meta:
+        model = Participant
+        fields = ('id', 'position', 'full_name', 'avatar', 'flag', 'personal_id', 'distance', 'duration')
+
+
 class CompetitionMapsUserListSerializer(serializers.ModelSerializer):
     participants = serializers.SerializerMethodField()
     svg = serializers.CharField(source='competition.category.svg', read_only=True)
