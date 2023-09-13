@@ -100,9 +100,10 @@ class ParticipantListSerializer(serializers.ModelSerializer):
 
 
 class ChoiceSerializer(serializers.ModelSerializer):
+    svg = serializers.CharField(source='competition.category.svg', read_only=True)
     class Meta:
         model = CompetitionMaps
-        fields = ('id', 'title')
+        fields = ('id', 'title', 'svg')
 
 
 class ChoiceParticipantSerializer(serializers.ModelSerializer):
