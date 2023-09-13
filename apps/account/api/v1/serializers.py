@@ -115,27 +115,29 @@ class AboutMeSerializer(serializers.ModelSerializer):
 
 
 class CountrySerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Country
         fields = ('id', 'name', 'flag')
 
 
-class CompetitionResultSerializer(serializers.ModelSerializer):
+class ParticipantUserSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(source='competition.title', read_only=True)
+    category_name = serializers.CharField(source='choice.title', read_only=True)
+    category_icon = serializers.ImageField(source='competition.category.icon', read_only=True)
+    svg = serializers.CharField(source='competition.category.svg', read_only=True)
+    image = serializers.ImageField(source='choice.maps', read_only=True)
+
     class Meta:
         model = Participant
         fields = ('id', 'title', 'category_name', 'category_icon', 'svg', 'image', 'duration', 'created_at')
 
 
-class MonthResultSerializer(serializers.Serializer):
-    month = serializers.CharField()
-    results = CompetitionResultSerializer(many=True)
-
-
 class MyCompetitionsHistorySerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='get_fullname', read_only=True)
+    competitions = ParticipantUserSerializer(many=True)
     address = CountrySerializer(many=False)
-    data = MonthResultSerializer(many=True, read_only=True, source='get_monthly_results')
 
     class Meta:
         model = Account
-        fields = ('id', 'full_name', 'avatar', 'address', 'age', 'data')
+        fields = ('id', 'full_name', 'avatar', 'address', 'age', 'competitions')
