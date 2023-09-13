@@ -12,7 +12,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class CompetitionTextsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompetitionTexts
-        fields = ('id', 'competition', 'title', 'description')
+        fields = ('id', 'competition', 'title', 'link', 'description')
 
 
 class CompetitionMapsSerializer(serializers.ModelSerializer):

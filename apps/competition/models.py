@@ -78,6 +78,7 @@ class CompetitionTexts(BaseModel):
                                     related_name="competition_texts")
     title = models.CharField(max_length=223, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+    link = models.URLField(null=True, blank=True)
 
     def __str__(self):
         return self.title
