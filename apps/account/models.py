@@ -82,26 +82,26 @@ class Account(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
 
-    def get_monthly_results(self):
-        # Assuming you have a related name 'participants' for the Participant model
-        monthly_results = self.competitions.values('created_at__month', 'created_at__year').annotate(
-            total_results=Count('id')
-        )
-
-        data = []
-        for result in monthly_results:
-            month = result['created_at__month']
-            year = result['created_at__year']
-            results = self.competitions.filter(
-                created_at__month=month,
-                created_at__year=year
-            )
-            data.append({
-                'month': f"{month}-{year}",
-                'results': CompetitionResultSerializer(results, many=True).data
-            })
-
-        return data
+    # def get_monthly_results(self):
+    #     # Assuming you have a related name 'participants' for the Participant model
+    #     monthly_results = self.competitions.values('created_at__month', 'created_at__year').annotate(
+    #         total_results=Count('id')
+    #     )
+    #
+    #     data = []
+    #     for result in monthly_results:
+    #         month = result['created_at__month']
+    #         year = result['created_at__year']
+    #         results = self.competitions.filter(
+    #             created_at__month=month,
+    #             created_at__year=year
+    #         )
+    #         data.append({
+    #             'month': f"{month}-{year}",
+    #             'results': CompetitionResultSerializer(results, many=True).data
+    #         })
+    #
+    #     return data
 
     def get_fullname(self):
         if self.first_name and self.last_name:
