@@ -54,7 +54,7 @@ class Competition(BaseModel):
 
 
 class CompetitionMaps(BaseModel):
-    competition = models.ForeignKey(Competition, on_delete=models.SET_NULL, null=True, blank=True,
+    competition = models.ForeignKey(Competition, on_delete=models.CASCADE, null=True, blank=True,
                                     related_name="competition_maps")
     maps = models.ImageField(upload_to='maps/', null=True, blank=True)
     title = models.CharField(max_length=223, null=True, blank=True)
@@ -74,7 +74,7 @@ class CompetitionMaps(BaseModel):
 
 
 class CompetitionTexts(BaseModel):
-    competition = models.ForeignKey(Competition, on_delete=models.SET_NULL, null=True, blank=True,
+    competition = models.ForeignKey(Competition, on_delete=models.CASCADE, null=True, blank=True,
                                     related_name="competition_texts")
     title = models.CharField(max_length=223, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
@@ -85,11 +85,11 @@ class CompetitionTexts(BaseModel):
 
 
 class Participant(BaseModel):
-    user = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True,
+    user = models.ForeignKey(Account, on_delete=models.CASCADE, null=True, blank=True,
                              related_name="competitions")
-    competition = models.ForeignKey(Competition, on_delete=models.SET_NULL, null=True, blank=True,
+    competition = models.ForeignKey(Competition, on_delete=models.CASCADE, null=True, blank=True,
                                     related_name="competition_participants")
-    choice = models.ForeignKey(CompetitionMaps, on_delete=models.SET_NULL, null=True, blank=True,
+    choice = models.ForeignKey(CompetitionMaps, on_delete=models.CASCADE, null=True, blank=True,
                                related_name="participant_choices")
     distance = models.CharField(max_length=50, null=True, blank=True)
     position = models.IntegerField(null=True, blank=True)
