@@ -4,7 +4,10 @@ from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
+from django.db.models import Count
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from apps.account.api.v1.serializers import CompetitionResultSerializer
 
 phone_regex = RegexValidator(
     regex=r'^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$',
@@ -78,6 +81,27 @@ class Account(AbstractBaseUser, PermissionsMixin):
     objects = AccountManager()
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
+
+    def get_monthly_results(self):
+        # Assuming you have a related name 'participants' for the Participant model
+        monthly_results = self.competitions.values('created_at__month', 'created_at__year').annotate(
+            total_results=Count('id')
+        )
+
+        data = []
+        for result in monthly_results:
+            month = result['created_at__month']
+            year = result['created_at__year']
+            results = self.competitions.filter(
+                created_at__month=month,
+                created_at__year=year
+            )
+            data.append({
+                'month': f"{month}-{year}",
+                'results': CompetitionResultSerializer(results, many=True).data
+            })
+
+        return data
 
     def get_fullname(self):
         if self.first_name and self.last_name:
