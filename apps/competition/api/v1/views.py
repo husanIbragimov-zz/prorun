@@ -65,7 +65,7 @@ class ChoiceListView(generics.ListAPIView):
 class ChoiceParticipantListView(generics.ListAPIView):
     queryset = Participant.objects.filter(is_active=True)
     serializer_class = ChoiceParticipantSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
 
     def get_queryset(self):
         choice_id = self.kwargs['choice_id']
