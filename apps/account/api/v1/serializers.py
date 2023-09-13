@@ -162,7 +162,6 @@ class MyCompetitionsHistorySerializer(serializers.ModelSerializer):
         data = []
         for result in monthly_results:
             month = result['created_at__month']
-            print(month)
             year = result['created_at__year']
             results = obj.competitions.filter(
                 created_at__month=month,
