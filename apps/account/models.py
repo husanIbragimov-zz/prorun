@@ -7,8 +7,6 @@ from django.db import models
 from django.db.models import Count
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from apps.account.api.v1.serializers import CompetitionResultSerializer
-
 phone_regex = RegexValidator(
     regex=r'^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$',
     message="Phone number must be entered in the format: '+998 33 215 05 48'. Up to 13 digits allowed."
