@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate
+from django.db.models import Count
 from rest_framework import serializers
 from apps.account.models import Account, VerifyPhoneNumber, phone_regex, Country, SportClub
 from apps.competition.models import Participant
@@ -99,8 +100,8 @@ class AccountProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = [
-            'id', 'first_name', 'last_name', 'phone_number', 'avatar', 'gender', 'birthday', 'address', 'tall',
-            'weight', 'date_login', 'date_created'
+            'id', 'first_name', 'last_name', 'phone_number', 'avatar', 'gender', 'birthday', 'address', 'sport_club',
+            'tall', 'weight', 'date_login', 'date_created'
         ]
 
 
@@ -115,17 +116,15 @@ class AboutMeSerializer(serializers.ModelSerializer):
 
 
 class CountrySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Country
         fields = ('id', 'name', 'flag')
 
 
 class SportClubSerializer(serializers.ModelSerializer):
-
-        class Meta:
-            model = SportClub
-            fields = ('id', 'name', 'flag')
+    class Meta:
+        model = SportClub
+        fields = ('id', 'name', 'flag')
 
 
 class CompetitionResultSerializer(serializers.ModelSerializer):
@@ -148,8 +147,30 @@ class MonthResultSerializer(serializers.Serializer):
 class MyCompetitionsHistorySerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='get_fullname', read_only=True)
     address = CountrySerializer(many=False)
-    data = MonthResultSerializer(many=True, read_only=True, source='get_monthly_results')
+    data = serializers.SerializerMethodField()
 
     class Meta:
         model = Account
         fields = ('id', 'full_name', 'avatar', 'address', 'age', 'data')
+
+    def get_data(self, obj):
+        # Assuming you have a related name 'participants' for the Participant model
+        monthly_results = obj.competitions.values('created_at__month', 'created_at__year').annotate(
+            total_results=Count('id')
+        )
+
+        data = []
+        for result in monthly_results:
+            month = result['created_at__month']
+            year = result['created_at__year']
+            results = obj.competitions.filter(
+                created_at__month=month,
+                created_at__year=year
+            )
+            data.append({
+                'month': f"{month}-{year}",
+                'count': result['total_results'],
+                'results': CompetitionResultSerializer(results, many=True).data
+            })
+
+        return data
