@@ -136,7 +136,7 @@ class CompetitionResultSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Participant
-        fields = ('id', 'title', 'category_name', 'category_icon', 'svg', 'image', 'duration', 'created_at')
+        fields = ('id', 'title', 'position', 'category_name', 'category_icon', 'svg', 'image', 'duration', 'created_at')
 
 
 class MonthResultSerializer(serializers.Serializer):
@@ -162,6 +162,7 @@ class MyCompetitionsHistorySerializer(serializers.ModelSerializer):
         data = []
         for result in monthly_results:
             month = result['created_at__month']
+            print(month)
             year = result['created_at__year']
             results = obj.competitions.filter(
                 created_at__month=month,
