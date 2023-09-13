@@ -125,11 +125,12 @@ class ParticipantUserSerializer(serializers.ModelSerializer):
     title = serializers.CharField(source='competition.title', read_only=True)
     category_name = serializers.CharField(source='choice.title', read_only=True)
     category_icon = serializers.ImageField(source='competition.category.icon', read_only=True)
+    svg = serializers.CharField(source='competition.category.svg', read_only=True)
     image = serializers.ImageField(source='choice.maps', read_only=True)
 
     class Meta:
         model = Participant
-        fields = ('id', 'title', 'category_name', 'category_icon', 'image', 'duration', 'created_at')
+        fields = ('id', 'title', 'category_name', 'category_icon', 'svg', 'image', 'duration', 'created_at')
 
 
 class MyCompetitionsHistorySerializer(serializers.ModelSerializer):
