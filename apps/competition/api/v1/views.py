@@ -72,8 +72,8 @@ class ChoiceParticipantListView(generics.ListAPIView):
         competition_id = self.kwargs['competition_id']
         search = self.request.query_params.get('search', None)
         if search:
-            return self.queryset.filter(Q(choice_id=choice_id) & Q(competition_id=competition_id) & Q(
-                user__first_name__contains=search) | Q(user__last_name__contains=search)).order_by('duration')
+            return self.queryset.filter(Q(choice_id=choice_id) & Q(competition_id=competition_id) & Q(Q(
+                user__first_name__contains=search) | Q(user__last_name__contains=search))).order_by('duration')
         return self.queryset.filter(choice_id=choice_id, competition_id=competition_id).order_by('duration')
 
 
