@@ -101,6 +101,7 @@ class ParticipantListSerializer(serializers.ModelSerializer):
 
 class ChoiceSerializer(serializers.ModelSerializer):
     svg = serializers.CharField(source='competition.category.svg', read_only=True)
+
     class Meta:
         model = CompetitionMaps
         fields = ('id', 'title', 'svg')
@@ -222,8 +223,8 @@ class CompetitionDetailSerializer(serializers.ModelSerializer):
         model = Competition
         fields = (
             'id', 'title', 'sub_title', 'youtube', 'media', 'category_icon', 'competition_maps',
-            'period', 'distance', 'members', 'joiners_count', 'free_joiners_count', 'where_is_ticket', 'limit',
-            'competition_texts', 'partners', 'is_joined'
+            'period', 'distance', 'members', 'joiners_count', 'free_joiners_count', 'where_is_ticket', 'limit', 'about',
+            'link', 'file', 'competition_texts', 'partners', 'is_joined'
         )
 
 
