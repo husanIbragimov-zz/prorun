@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from apps.account.models import Account, VerifyPhoneNumber, phone_regex, Country
+from apps.account.models import Account, VerifyPhoneNumber, phone_regex, Country, SportClub
 from apps.competition.models import Participant
 
 
@@ -121,7 +121,14 @@ class CountrySerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'flag')
 
 
-class ParticipantUserSerializer(serializers.ModelSerializer):
+class SportClubSerializer(serializers.ModelSerializer):
+
+        class Meta:
+            model = SportClub
+            fields = ('id', 'name', 'flag')
+
+
+class CompetitionResultSerializer(serializers.ModelSerializer):
     title = serializers.CharField(source='competition.title', read_only=True)
     category_name = serializers.CharField(source='choice.title', read_only=True)
     category_icon = serializers.ImageField(source='competition.category.icon', read_only=True)
@@ -133,11 +140,16 @@ class ParticipantUserSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'category_name', 'category_icon', 'svg', 'image', 'duration', 'created_at')
 
 
+class MonthResultSerializer(serializers.Serializer):
+    month = serializers.CharField()
+    results = CompetitionResultSerializer(many=True)
+
+
 class MyCompetitionsHistorySerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='get_fullname', read_only=True)
-    competitions = ParticipantUserSerializer(many=True)
     address = CountrySerializer(many=False)
+    data = MonthResultSerializer(many=True, read_only=True, source='get_monthly_results')
 
     class Meta:
         model = Account
-        fields = ('id', 'full_name', 'avatar', 'address', 'age', 'competitions')
+        fields = ('id', 'full_name', 'avatar', 'address', 'age', 'data')

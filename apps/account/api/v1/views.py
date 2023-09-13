@@ -6,7 +6,7 @@ from rest_framework import generics, status, permissions, filters
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
-from apps.account.models import Account, VerifyPhoneNumber, Country
+from apps.account.models import Account, VerifyPhoneNumber, Country, SportClub
 from .permissions import IsOwnUserOrReadOnly
 from .serializers import RegisterSerializer, LoginSerializer, VerifyPhoneNumberRegisterSerializer, \
     VerifyPhoneNumberSerializer, ChangePasswordSerializer, AccountProfileSerializer, AboutMeSerializer, \
@@ -190,3 +190,10 @@ class CountryListView(generics.ListAPIView):
     serializer_class = CountrySerializer
     search_fields = ['name']
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+
+
+class SportClubListView(generics.ListAPIView):
+    queryset = SportClub.objects.all().order_by('name')
+    serializer_class = CountrySerializer
+    search_fields = ['name']
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
