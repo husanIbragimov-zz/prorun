@@ -57,9 +57,12 @@ class ChoiceListView(generics.ListAPIView):
     queryset = CompetitionMaps.objects.all()
     serializer_class = ChoiceSerializer
 
-    def get_queryset(self):
+    def get(self, request, *args, **kwargs):
         competition_id = self.kwargs['competition_id']
-        return self.queryset.filter(competition_id=competition_id)
+        user = self.request.user
+        qs = self.queryset.filter(competition_id=competition_id)
+        sz = self.serializer_class(qs, context={'user': user}, many=True)
+        return Response(sz.data, status=status.HTTP_200_OK)
 
 
 class ChoiceParticipantListView(generics.ListAPIView):
