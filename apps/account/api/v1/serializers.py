@@ -148,10 +148,14 @@ class MyCompetitionsHistorySerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='get_fullname', read_only=True)
     address = CountrySerializer(many=False)
     data = serializers.SerializerMethodField()
+    count = serializers.SerializerMethodField()
 
     class Meta:
         model = Account
-        fields = ('id', 'full_name', 'avatar', 'address', 'age', 'data')
+        fields = ('id', 'full_name', 'avatar', 'address', 'sport_club', 'age', 'count', 'data')
+
+    def get_count(self, obj):
+        return obj.competitions.count()
 
     def get_data(self, obj):
         # Assuming you have a related name 'participants' for the Participant model
