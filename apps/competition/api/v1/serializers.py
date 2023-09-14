@@ -106,12 +106,13 @@ class ChoiceParticipantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Participant
-        fields = ('id', 'position', 'full_name', 'avatar', 'flag', 'personal_id', 'distance', 'duration')
+        fields = ('id', 'position', 'full_name', 'avatar', 'flag', 'personal_id', 'distance', 'duration', 'is_active')
         extra_kwargs = {
             "position": {"read_only": True},
             "personal_id": {"read_only": True},
             "distance": {"read_only": True},
             "duration": {"read_only": True},
+            "is_active": {"read_only": True},
         }
 
 
