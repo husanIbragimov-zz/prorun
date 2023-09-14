@@ -1,6 +1,7 @@
 import qrcode
 from apps.competition.models import Competition, Participant
 import os
+from django.utils.encoding import smart_str
 
 
 def generate_qrcode():
@@ -26,9 +27,11 @@ def check_qrcode(participant):
         border=4,
     )
     if not participant.qr_code:
-        qr.add_data(
-            f"{participant.competition.title} - {participant.choice.title}\n{participant.user.first_name} {participant.user.last_name}\nID: {participant.id}".encode('utf-8')
+        # Encode the text using UTF-8
+        qr_data = smart_str(
+            f"{participant.competition.title} - {participant.choice.title}\n{participant.user.first_name} {participant.user.last_name}\nID: {participant.id}"
         )
+        qr.add_data(qr_data)
         qr.make(fit=True)
         qr_img = qr.make_image(fill_color="black", back_color="white")
         qr_code_path = f"qr-img-{participant.id}.jpg"
