@@ -131,7 +131,7 @@ class ChoiceSerializer(serializers.ModelSerializer):
         user = self.context.get('user')
         print(user, obj)
         participants = Participant.objects.filter(choice_id=obj.id, user_id=user.id).first()
-        return ChoiceParticipantSerializer(participants, many=False).data
+        return ChoiceParticipantSerializer(participants, context={'user': user}, many=False).data
 
     class Meta:
         model = CompetitionMaps
