@@ -103,6 +103,7 @@ class ChoiceParticipantSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='user.get_fullname', read_only=True)
     flag = serializers.URLField(source='user.address.flag', read_only=True)
     avatar = serializers.ImageField(source='user.avatar', read_only=True)
+    is_active = serializers.SerializerMethodField()
 
     class Meta:
         model = Participant
@@ -112,8 +113,14 @@ class ChoiceParticipantSerializer(serializers.ModelSerializer):
             "personal_id": {"read_only": True},
             "distance": {"read_only": True},
             "duration": {"read_only": True},
-            "is_active": {"read_only": True},
         }
+
+    def get_is_active(self, obj):
+        user = self.context.get('user')
+        print(user, obj)
+        if user == obj.user:
+            return True
+        return False
 
 
 class ChoiceSerializer(serializers.ModelSerializer):

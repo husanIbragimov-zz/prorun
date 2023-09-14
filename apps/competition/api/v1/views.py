@@ -70,14 +70,19 @@ class ChoiceParticipantListView(generics.ListAPIView):
     serializer_class = ChoiceParticipantSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
 
-    def get_queryset(self):
+    def get(self, request, *args, **kwargs):
         choice_id = self.kwargs['choice_id']
         competition_id = self.kwargs['competition_id']
+        user = self.request.user
         search = self.request.query_params.get('search', None)
         if search:
-            return self.queryset.filter(Q(choice_id=choice_id) & Q(competition_id=competition_id) & Q(Q(
+            qs = self.queryset.filter(Q(choice_id=choice_id) & Q(competition_id=competition_id) & Q(Q(
                 user__first_name__contains=search) | Q(user__last_name__contains=search))).order_by('duration')
-        return self.queryset.filter(choice_id=choice_id, competition_id=competition_id).order_by('duration')
+            sz = self.serializer_class(qs, context={'user': user}, many=True)
+            return Response(sz.data, status=status.HTTP_200_OK)
+        qs = self.queryset.filter(choice_id=choice_id, competition_id=competition_id).order_by('duration')
+        sz = self.serializer_class(qs, context={'user': user}, many=True)
+        return Response(sz.data, status=status.HTTP_200_OK)
 
 
 class ParticipantRetrieveView(generics.ListAPIView):
