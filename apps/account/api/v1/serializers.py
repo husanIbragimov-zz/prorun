@@ -147,6 +147,7 @@ class MonthResultSerializer(serializers.Serializer):
 class MyCompetitionsHistorySerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='get_fullname', read_only=True)
     address = CountrySerializer(many=False)
+    sport_club = serializers.CharField(source='sport_club.name', read_only=True)
     data = serializers.SerializerMethodField()
     count = serializers.SerializerMethodField()
 
