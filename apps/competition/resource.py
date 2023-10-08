@@ -2,6 +2,7 @@ from import_export import resources
 from import_export.fields import Field
 from .models import Participant
 from django.shortcuts import get_object_or_404
+from datetime import timedelta
 
 
 class ParticipantResource(resources.ModelResource):
@@ -15,12 +16,21 @@ class ParticipantResource(resources.ModelResource):
         Override to add additional logic. Does nothing by default.
         Manually removing commit hooks for intermediate savepoints of atomic transaction
         """
-        print(dataset)
+        print(result, dataset)
         
         for data in dataset:
             print(data)
             model = get_object_or_404(Participant, id=data[0])
-            model.position = data[1] if data[1] else None
-            model.personal_id = data[4] if data[4] else None
-            model.duration = data[7] if data[7] else None
+            print(model)
+            duration_str = data[7]
+            position_str = data[2]
+            try:
+                    
+                position_numeric = float(position_str)
+                model.position = position_numeric
+                model.personal_id = data[3]
+                model.duration = timedelta(seconds=float(duration_str))
+            except ValueError:
+                pass
+            
             model.save()
