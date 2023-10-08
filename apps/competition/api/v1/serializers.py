@@ -214,7 +214,7 @@ class CompetitionMapImagesSerializer(serializers.ModelSerializer):
 class HistoryImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = HistoryImage
-        fields = ('id', 'image')
+        fields = ('id', 'image', 'image_url')
 
 
 class CompetitionDetailSerializer(serializers.ModelSerializer):
