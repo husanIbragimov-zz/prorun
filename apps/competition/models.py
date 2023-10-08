@@ -54,6 +54,11 @@ class Competition(BaseModel):
             self.status = 'past'
         self.save()
         return "success"
+    
+
+class HistoryImage(BaseModel):
+    competition = models.ForeignKey(Competition, on_delete=models.CASCADE, null=True, blank=True, related_name="history_images")
+    image = models.ImageField(upload_to='history_images/', null=True, blank=True)
 
 
 class CompetitionMaps(BaseModel):

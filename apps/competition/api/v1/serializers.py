@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.competition.models import Category, Competition, CompetitionMaps, Participant, CompetitionTexts
+from apps.competition.models import Category, Competition, CompetitionMaps, Participant, CompetitionTexts, HistoryImage
 from apps.main.api.v1.serializers import PartnerSerializer
 
 
@@ -211,6 +211,12 @@ class CompetitionMapImagesSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'maps', 'svg', 'participants')
 
 
+class HistoryImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HistoryImage
+        fields = ('id', 'image')
+
+
 class CompetitionDetailSerializer(serializers.ModelSerializer):
     category_icon = serializers.ImageField(source='category.icon', read_only=True)
     competition_texts = CompetitionTextsSerializer(many=True)
@@ -219,6 +225,7 @@ class CompetitionDetailSerializer(serializers.ModelSerializer):
     free_joiners_count = serializers.SerializerMethodField()
     partners = PartnerSerializer(many=True)
     is_joined = serializers.SerializerMethodField()
+    history_images = HistoryImageSerializer(many=True, read_only=True)
 
     def get_is_joined(self, obj):
         request = self.context.get('request')
@@ -245,7 +252,7 @@ class CompetitionDetailSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'title', 'sub_title', 'youtube', 'media', 'category_icon', 'competition_maps',
             'period', 'distance', 'members', 'joiners_count', 'free_joiners_count', 'where_is_ticket', 'limit', 'about',
-            'link', 'file', 'competition_texts', 'partners', 'is_joined'
+            'link', 'file', 'competition_texts', 'partners', 'is_joined', 'history_images'
         )
 
 
