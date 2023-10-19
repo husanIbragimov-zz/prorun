@@ -9,7 +9,6 @@ def verify(phone_number, code):
         "Authorization": f"Bearer {TOKEN}"
     }
     phone_number = str(phone_number)[1:13]
-    print(phone_number)
     data = {
         'mobile_phone': phone_number,
         'message': f"Verify code: {code}",
@@ -18,5 +17,5 @@ def verify(phone_number, code):
     }
 
     response = requests.request('POST', URL, data=data, headers=PARAMS)
-    print(response.json())
+    # print(response.json())
     return response
