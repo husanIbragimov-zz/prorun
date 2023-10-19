@@ -76,8 +76,9 @@ class ChoiceParticipantListView(generics.ListAPIView):
         user = self.request.user
         search = self.request.query_params.get('search', None)
         if search:
-            qs = self.queryset.filter(Q(choice_id=choice_id) & Q(competition_id=competition_id) & Q(Q(
-                user__first_name__contains=search) | Q(user__last_name__contains=search))).order_by('duration')
+            qs = self.queryset.filter(Q(choice_id=choice_id) & Q(competition_id=competition_id) &
+                                      Q(Q(user__first_name__contains=search) | Q(user__last_name__contains=search) |
+                                        Q(personal_id__contains=search))).order_by('duration')
             sz = self.serializer_class(qs, context={'user': user}, many=True)
             return Response(sz.data, status=status.HTTP_200_OK)
         qs = self.queryset.filter(choice_id=choice_id, competition_id=competition_id).order_by('duration')
