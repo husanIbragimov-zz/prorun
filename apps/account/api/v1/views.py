@@ -32,9 +32,6 @@ class RegisterAPIView(generics.GenericAPIView):
             print(verfy)
             if verfy:  # sms provider kelganida ishga tushadi
                 VerifyPhoneNumber.objects.create(phone_number=phone_number, code=code)
-            # data = {
-            #     'code': code
-            # }
             return Response({'success': True, 'message': 'Please verify phone number'},
                             status=status.HTTP_201_CREATED)
         except Exception as e:
@@ -73,7 +70,7 @@ class VerifyPhoneNumberAPIView(generics.GenericAPIView):
         code = request.data.get('code')
         verify_code = VerifyPhoneNumber.objects.filter(phone_number=phone_number, code=code).first()
         if verify_code:
-            user = Account.objects.filter(phone_number=phone_number).first()
+            user = get_object_or_404(Account, phone_number=phone_number)
             user.is_verified = True
             user.save()
             verify_code.delete()
