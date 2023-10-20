@@ -41,6 +41,10 @@ GENDER = (
 )
 
 
+class SMSToken(models.Model):
+    token = models.TextField(null=True, blank=True)
+
+
 class Country(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
     flag = models.URLField(null=True, blank=True)
@@ -79,7 +83,6 @@ class Account(AbstractBaseUser, PermissionsMixin):
     objects = AccountManager()
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
-
 
     def get_fullname(self):
         if self.first_name and self.last_name:

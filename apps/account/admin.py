@@ -1,5 +1,5 @@
 from django.contrib import admin
-from apps.account.models import Account, VerifyPhoneNumber, Country, SportClub
+from apps.account.models import Account, VerifyPhoneNumber, Country, SportClub, SMSToken
 
 
 class AccountAdmin(admin.ModelAdmin):
@@ -12,4 +12,5 @@ class AccountAdmin(admin.ModelAdmin):
 admin.site.register(Account, AccountAdmin)
 admin.site.register(VerifyPhoneNumber)
 admin.site.register(SportClub)
+admin.site.register(SMSToken)
 admin.site.register(Country)
