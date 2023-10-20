@@ -38,9 +38,6 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    # swagger
-    path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('doc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
     path('token/api/access/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -58,3 +55,10 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.STAGE == 'dev':
+    urlpatterns += [
+        # swagger
+        path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+        path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    ]

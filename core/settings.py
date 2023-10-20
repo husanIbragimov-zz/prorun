@@ -12,11 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
-from dotenv import load_dotenv
 from django.conf import settings
-
-dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
-load_dotenv(dotenv_path)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,9 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = str(os.getenv('SECRET_KEY'))
-TOKEN = str(os.getenv('TOKEN'))
+SECRET_KEY = os.getenv("SECRET_KEY")
+EMAIL = str(os.getenv('EMAIL'))
+PASSWORD = str(os.getenv('PASSWORD'))
+STAGE = str(os.getenv('STAGE'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
