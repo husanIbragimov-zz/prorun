@@ -27,7 +27,7 @@ PASSWORD = str(os.getenv('PASSWORD'))
 STAGE = str(os.getenv('STAGE'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG")
 
 ALLOWED_HOSTS = ['*']
 
