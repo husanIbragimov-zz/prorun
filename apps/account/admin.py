@@ -1,5 +1,15 @@
 from django.contrib import admin
-from apps.account.models import Account, VerifyPhoneNumber, Country, SportClub, SMSToken
+from apps.account.models import Account, VerifyPhoneNumber, Country, SportClub, SMSToken, City
+
+
+class CityInline(admin.TabularInline):
+    model = City
+    extra = 1
+
+
+class CountryAdmin(admin.ModelAdmin):
+    inlines = (CityInline,)
+    list_display = ('name', 'flag')
 
 
 class AccountAdmin(admin.ModelAdmin):
@@ -13,4 +23,4 @@ admin.site.register(Account, AccountAdmin)
 admin.site.register(VerifyPhoneNumber)
 admin.site.register(SportClub)
 admin.site.register(SMSToken)
-admin.site.register(Country)
+admin.site.register(Country, CountryAdmin)

@@ -6,11 +6,11 @@ from rest_framework import generics, status, permissions, filters
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
-from apps.account.models import Account, VerifyPhoneNumber, Country, SportClub
+from apps.account.models import Account, VerifyPhoneNumber, Country, SportClub, City
 from .permissions import IsOwnUserOrReadOnly
 from .serializers import RegisterSerializer, LoginSerializer, VerifyPhoneNumberRegisterSerializer, \
     VerifyPhoneNumberSerializer, ChangePasswordSerializer, AccountProfileSerializer, AboutMeSerializer, \
-    MyCompetitionsHistorySerializer, CountrySerializer
+    MyCompetitionsHistorySerializer, CountrySerializer, CitySerializer
 from rest_framework.response import Response
 
 from .utils import verify
@@ -180,6 +180,17 @@ class CountryListView(generics.ListAPIView):
     serializer_class = CountrySerializer
     search_fields = ['name']
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+
+
+class CityListView(generics.ListAPIView):
+    serializer_class = CitySerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+
+    def get_queryset(self):
+        search = self.request.query_params.get('search')
+        if search:
+            return City.objects.filter(country_id=search).order_by('name')
+        return City.objects.all().order_by('name')
 
 
 class SportClubListView(generics.ListAPIView):

@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 from django.db.models import Count
 from rest_framework import serializers
-from apps.account.models import Account, VerifyPhoneNumber, phone_regex, Country, SportClub
+from apps.account.models import Account, VerifyPhoneNumber, phone_regex, Country, SportClub, City
 from apps.competition.models import Participant
 
 
@@ -119,6 +119,16 @@ class CountrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Country
         fields = ('id', 'name', 'flag')
+
+
+class CitySerializer(serializers.ModelSerializer):
+    flag = serializers.URLField(source='country.flag', read_only=True)
+    country = serializers.CharField(source='country.name', read_only=True)
+    country_id = serializers.IntegerField(source='country.id', read_only=True)
+
+    class Meta:
+        model = City
+        fields = ('id', 'name', 'country', 'country_id', 'flag')
 
 
 class SportClubSerializer(serializers.ModelSerializer):

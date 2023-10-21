@@ -3,7 +3,7 @@ from django.urls import path, include
 from apps.account.api.v1.views import RegisterAPIView, LoginAPIView, VerifyPhoneNumberAPIView, \
     ReVerifyPhoneNumberAPIView, ChangePasswordCompletedView, LogoutView, UserProfileListView, \
     PersonalUserProfileDetailView, me, AboutMeListView, MyCompetitionsHistoryListView, CountryListView, \
-    SportClubListView
+    SportClubListView, CityListView
 
 urlpatterns = [
     path('register/', RegisterAPIView.as_view()),
@@ -15,6 +15,7 @@ urlpatterns = [
 
     # path('users/', UserProfileListView.as_view()),
     path('countries/', CountryListView.as_view()),
+    path('cities/', CityListView.as_view()),
     path('sport-clubs/', SportClubListView.as_view()),
     path('<str:phone_number>/', PersonalUserProfileDetailView.as_view()),
     path('history/<int:pk>/', MyCompetitionsHistoryListView.as_view()),
