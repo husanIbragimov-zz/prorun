@@ -103,6 +103,7 @@ class Participant(BaseModel):
     distance = models.CharField(max_length=50, null=True, blank=True)
     position = models.IntegerField(null=True, blank=True)
     personal_id = models.CharField(max_length=223, null=True, blank=True)
+    tag = models.CharField(max_length=223, null=True, blank=True)
     duration = models.TimeField(null=True, blank=True)
     qr_code = models.ImageField(upload_to='qr_code/', null=True, blank=True)
     is_active = models.BooleanField(default=True)
