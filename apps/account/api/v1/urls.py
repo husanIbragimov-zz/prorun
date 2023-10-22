@@ -1,9 +1,13 @@
 from django.urls import path, include
-
+from rest_framework.routers import DefaultRouter
 from apps.account.api.v1.views import RegisterAPIView, LoginAPIView, VerifyPhoneNumberAPIView, \
     ReVerifyPhoneNumberAPIView, ChangePasswordCompletedView, LogoutView, UserProfileListView, \
     PersonalUserProfileDetailView, me, AboutMeListView, MyCompetitionsHistoryListView, CountryListView, \
-    SportClubListView, CityListView
+    SportClubListView, CityListView, SetNewPasswordCompletedAPIView
+
+router = DefaultRouter()
+
+router.register('forgot-password', SetNewPasswordCompletedAPIView, basename='forgot-password')
 
 urlpatterns = [
     path('register/', RegisterAPIView.as_view()),
@@ -21,4 +25,4 @@ urlpatterns = [
     path('history/<int:pk>/', MyCompetitionsHistoryListView.as_view()),
     # path('me/', me),
     path('me/<str:phone_number>/', AboutMeListView.as_view()),
-]
+] + router.urls

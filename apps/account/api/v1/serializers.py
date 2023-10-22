@@ -3,6 +3,7 @@ from django.db.models import Count
 from rest_framework import serializers
 from apps.account.models import Account, VerifyPhoneNumber, phone_regex, Country, SportClub, City
 from apps.competition.models import Participant
+from django.shortcuts import get_object_or_404
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -101,7 +102,7 @@ class AccountProfileSerializer(serializers.ModelSerializer):
         model = Account
         fields = [
             'id', 'first_name', 'last_name', 'phone_number', 'avatar', 'gender', 'birthday', 'address', 'sport_club',
-            'tall', 'weight', 'size',  'date_login', 'date_created'
+            'tall', 'weight', 'size', 'date_login', 'date_created'
         ]
 
 
@@ -189,3 +190,29 @@ class MyCompetitionsHistorySerializer(serializers.ModelSerializer):
             })
 
         return data
+
+
+class SetNewPasswordSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(min_length=6, max_length=16, write_only=True)
+    password2 = serializers.CharField(min_length=6, max_length=16, write_only=True)
+    code = serializers.CharField(max_length=6, write_only=True)
+
+    class Meta:
+        model = Account
+        fields = ('password', 'password2')
+
+    def validate(self, attrs):
+        password = attrs.get('password')
+        password2 = attrs.get('password2')
+        code = self.context.get('pk')
+        block_user = VerifyPhoneNumber.objects.get(code=code)
+        user = Account.objects.get(phone_number=block_user.phone_number)
+        if not user:
+            raise serializers.ValidationError({'success': False, 'message': 'User not found'})
+        if password != password2:
+            raise serializers.ValidationError({'success': False, 'message': 'Passwords not match'})
+        user.set_password(password)
+        user.save()
+        return attrs
+
+

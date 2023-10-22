@@ -2,16 +2,17 @@ import random
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework import generics, status, permissions, filters
+from rest_framework import generics, status, permissions, filters, mixins, viewsets
 from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.shortcuts import get_object_or_404
 from apps.account.models import Account, VerifyPhoneNumber, Country, SportClub, City
 from .permissions import IsOwnUserOrReadOnly
 from .serializers import RegisterSerializer, LoginSerializer, VerifyPhoneNumberRegisterSerializer, \
     VerifyPhoneNumberSerializer, ChangePasswordSerializer, AccountProfileSerializer, AboutMeSerializer, \
-    MyCompetitionsHistorySerializer, CountrySerializer, CitySerializer
+    MyCompetitionsHistorySerializer, CountrySerializer, CitySerializer, SetNewPasswordSerializer
 from rest_framework.response import Response
+from django.contrib.auth.views import PasswordResetView
 
 from .utils import verify
 
@@ -73,7 +74,7 @@ class VerifyPhoneNumberAPIView(generics.GenericAPIView):
             user = get_object_or_404(Account, phone_number=phone_number)
             user.is_verified = True
             user.save()
-            verify_code.delete()
+            # verify_code.delete()
             return Response({
                 'status': True,
                 'message': 'Phone number is verified'
@@ -198,3 +199,18 @@ class SportClubListView(generics.ListCreateAPIView):
     serializer_class = CountrySerializer
     search_fields = ['name']
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+
+
+class SetNewPasswordCompletedAPIView(mixins.UpdateModelMixin, viewsets.GenericViewSet):
+    # http://127.0.0.1:8000/account/api/v1/forgot-password/
+    serializer_class = SetNewPasswordSerializer
+    queryset = VerifyPhoneNumber.objects.all()
+    lookup_field = 'code'
+    permission_classes = (AllowAny,)
+
+    def patch(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'pk': self.kwargs['code']})
+        serializer.is_valid(raise_exception=True)
+        return Response({'success': True, 'message': 'Successfully set new password'}, status=status.HTTP_200_OK)
+
+
