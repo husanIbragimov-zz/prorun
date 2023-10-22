@@ -163,14 +163,14 @@ class MonthResultSerializer(serializers.Serializer):
 
 class MyCompetitionsHistorySerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='get_fullname', read_only=True)
-    address = CountrySerializer(many=False)
+    country = CountrySerializer(many=False)
     sport_club = serializers.CharField(source='sport_club.name', read_only=True)
     data = serializers.SerializerMethodField()
     count = serializers.SerializerMethodField()
 
     class Meta:
         model = Account
-        fields = ('id', 'full_name', 'avatar', 'address', 'sport_club', 'age', 'count', 'data')
+        fields = ('id', 'full_name', 'avatar', 'country', 'sport_club', 'age', 'count', 'data')
 
     def get_count(self, obj):
         return obj.competitions.count()
