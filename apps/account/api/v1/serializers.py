@@ -98,7 +98,7 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 
 class AccountProfileSerializer(serializers.ModelSerializer):
     country_name = serializers.CharField(source='country.name', read_only=True)
-    city_name = serializers.CharField(source='city.name', read_only=True)
+    city_name = serializers.CharField(source='address.name', read_only=True)
 
     class Meta:
         model = Account
