@@ -101,7 +101,7 @@ class AccountProfileSerializer(serializers.ModelSerializer):
         model = Account
         fields = [
             'id', 'first_name', 'last_name', 'phone_number', 'avatar', 'gender', 'birthday', 'address', 'sport_club',
-            'tall', 'weight', 'date_login', 'date_created'
+            'tall', 'weight', 'size',  'date_login', 'date_created'
         ]
 
 

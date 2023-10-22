@@ -193,7 +193,7 @@ class CityListView(generics.ListAPIView):
         return City.objects.all().order_by('name')
 
 
-class SportClubListView(generics.ListAPIView):
+class SportClubListView(generics.ListCreateAPIView):
     queryset = SportClub.objects.all().order_by('name')
     serializer_class = CountrySerializer
     search_fields = ['name']

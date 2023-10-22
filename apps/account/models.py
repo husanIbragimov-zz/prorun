@@ -12,6 +12,18 @@ phone_regex = RegexValidator(
     message="Phone number must be entered in the format: '+998 33 215 05 48'. Up to 13 digits allowed."
 )
 
+SIZE = (
+    ('none', 'None'),
+    ('xs', 'XS'),
+    ('s', 'S'),
+    ('m', 'M'),
+    ('l', 'L'),
+    ('xl', 'XL'),
+    ('xxl', 'XXL'),
+    ('xxxl', 'XXXL'),
+    ('xxxxl', 'XXXXL'),
+)
+
 
 class AccountManager(BaseUserManager):
     def create_user(self, phone_number, password=None, **extra_fields):
@@ -77,7 +89,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     gender = models.CharField(max_length=6, choices=GENDER, default='none', help_text='none, male, female', null=True)
     birthday = models.DateField(null=True, blank=True)
-    size = models.CharField(max_length=50, null=True, blank=True)
+    size = models.CharField(max_length=5, choices=SIZE, default='none', help_text='none, xs, s, m, l, xl, xxl, xxxl, ')
     tall = models.FloatField(null=True, blank=True)
     weight = models.FloatField(null=True, blank=True)
     address = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
