@@ -86,6 +86,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=223, null=True, blank=True)
     phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True,
                                     unique=True, help_text='for example: +998945588859')  # validators should be a list
+    code = models.CharField(max_length=6, null=True, blank=True, unique=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     gender = models.CharField(max_length=6, choices=GENDER, default='none', help_text='none, male, female', null=True)
     birthday = models.DateField(null=True, blank=True)

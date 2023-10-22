@@ -12,7 +12,6 @@ from .serializers import RegisterSerializer, LoginSerializer, VerifyPhoneNumberR
     VerifyPhoneNumberSerializer, ChangePasswordSerializer, AccountProfileSerializer, AboutMeSerializer, \
     MyCompetitionsHistorySerializer, CountrySerializer, CitySerializer, SetNewPasswordSerializer
 from rest_framework.response import Response
-from django.contrib.auth.views import PasswordResetView
 
 from .utils import verify
 
@@ -29,12 +28,17 @@ class RegisterAPIView(generics.GenericAPIView):
             serializer.save()
             phone_number = serializer.data['phone_number']
             code = str(random.randint(100_000, 999_999))
-            verfy = verify(phone_number, code)
-            print(verfy)
-            if verfy:  # sms provider kelganida ishga tushadi
-                VerifyPhoneNumber.objects.create(phone_number=phone_number, code=code)
-            return Response({'success': True, 'message': 'Please verify phone number'},
-                            status=status.HTTP_201_CREATED)
+            response = verify(phone_number, code)
+            print(serializer.data)
+            if response.status_code == 200:  # sms provider kelganida ishga tushadi
+                user = get_object_or_404(Account, phone_number=phone_number)
+                user.code = code
+                user.save()
+                return Response({'success': True, 'message': 'Please verify phone number'},
+                                status=status.HTTP_201_CREATED)
+            if response.status_code == 401:
+                return Response({'success': False, 'message': 'Invalid token, Please try again'},
+                                status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'success': False, 'message': f'{e}'},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -50,10 +54,7 @@ class LoginAPIView(generics.GenericAPIView):
             user_data = serializer.data
             phone_number = user_data['phone_number']
             user = Account.objects.get(phone_number=phone_number)
-            if VerifyPhoneNumber.objects.filter(phone_number=phone_number).first():
-                check = VerifyPhoneNumber.objects.get(phone_number=phone_number)
-                check.delete()
-            if verify:
+            if user.is_verified:
                 return Response({
                     'success': True, 'message': 'Verification code was sent to your phon number',
                     'tokens': user.tokens
@@ -69,12 +70,10 @@ class VerifyPhoneNumberAPIView(generics.GenericAPIView):
     def post(self, request):
         phone_number = request.data.get('phone_number')
         code = request.data.get('code')
-        verify_code = VerifyPhoneNumber.objects.filter(phone_number=phone_number, code=code).first()
-        if verify_code:
-            user = get_object_or_404(Account, phone_number=phone_number)
+        user = get_object_or_404(Account, phone_number=phone_number, code=code)
+        if user:
             user.is_verified = True
             user.save()
-            # verify_code.delete()
             return Response({
                 'status': True,
                 'message': 'Phone number is verified'
@@ -90,15 +89,16 @@ class ReVerifyPhoneNumberAPIView(generics.GenericAPIView):
         try:
             phone_number = request.data.get('phone_number')
             code = str(random.randint(100_000, 999_999))
-            verify_code = VerifyPhoneNumber.objects.get(phone_number=phone_number)
-            if verify_code:
-                verify_code.code = code
-                verify_code.save()
+            user = get_object_or_404(Account, phone_number=phone_number)
+            if user:
+                user.code = code
+                user.save()
                 verify(phone_number, code)
 
-            return Response({"status": True}, status=status.HTTP_201_CREATED)
+            return Response({"success": True, "message": "verify code sent your phone number"},
+                            status=status.HTTP_201_CREATED)
         except Exception as e:
-            return Response({"status": False, 'error': f'{e}'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"success": False, 'error': f'{e}'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class LogoutView(generics.GenericAPIView):
@@ -108,12 +108,11 @@ class LogoutView(generics.GenericAPIView):
     def delete(self, request):
         try:
             user = self.request.user
-            user.is_verified = False
-            user.save()
             refresh = user.tokens['refresh']
             access = user.tokens['access']
             refresh.blacklist()
             access.blacklist()
+            user.save()
             return Response({
                 "message": "Logout Success"
             }, status=status.HTTP_204_NO_CONTENT)
@@ -204,13 +203,13 @@ class SportClubListView(generics.ListCreateAPIView):
 class SetNewPasswordCompletedAPIView(mixins.UpdateModelMixin, viewsets.GenericViewSet):
     # http://127.0.0.1:8000/account/api/v1/forgot-password/
     serializer_class = SetNewPasswordSerializer
-    queryset = VerifyPhoneNumber.objects.all()
+    queryset = Account.objects.all()
     lookup_field = 'code'
     permission_classes = (AllowAny,)
 
     def patch(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data, context={'pk': self.kwargs['code']})
+        code = self.kwargs['code']
+        user = get_object_or_404(Account, code=code)
+        serializer = self.serializer_class(data=request.data, context={'request': request, 'code': code})
         serializer.is_valid(raise_exception=True)
         return Response({'success': True, 'message': 'Successfully set new password'}, status=status.HTTP_200_OK)
-
-

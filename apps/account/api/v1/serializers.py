@@ -8,7 +8,6 @@ from django.shortcuts import get_object_or_404
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=6, max_length=16, write_only=True)
-    # phone_number = serializers.CharField(max_length=17, validators=[phone_regex], write_only=True)
     avatar = serializers.ImageField()
 
     class Meta:
@@ -52,8 +51,8 @@ class LoginSerializer(serializers.ModelSerializer):
 
 class VerifyPhoneNumberSerializer(serializers.ModelSerializer):
     class Meta:
-        model = VerifyPhoneNumber
-        fields = '__all__'
+        model = Account
+        fields = ('phone_number', 'code')
 
 
 class ResetPasswordSerializer(serializers.Serializer):
@@ -66,7 +65,7 @@ class VerifyPhoneNumberRegisterSerializer(serializers.ModelSerializer):
     code = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
-        model = VerifyPhoneNumber
+        model = Account
         fields = ('phone_number', 'code')
 
 
@@ -199,14 +198,14 @@ class SetNewPasswordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ('password', 'password2')
+        fields = ('password', 'password2', 'code')
 
     def validate(self, attrs):
         password = attrs.get('password')
         password2 = attrs.get('password2')
-        code = self.context.get('pk')
-        block_user = VerifyPhoneNumber.objects.get(code=code)
-        user = Account.objects.get(phone_number=block_user.phone_number)
+        code = attrs.get('code')
+        print(code, password2, password)
+        user = get_object_or_404(Account, code=code)
         if not user:
             raise serializers.ValidationError({'success': False, 'message': 'User not found'})
         if password != password2:
