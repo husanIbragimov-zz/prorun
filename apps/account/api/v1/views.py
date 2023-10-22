@@ -48,19 +48,18 @@ class LoginAPIView(generics.GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        try:
-            serializer.is_valid(raise_exception=True)
-            user_data = serializer.data
-            phone_number = user_data['phone_number']
-            user = Account.objects.get(phone_number=phone_number)
-            if user.is_verified:
-                return Response({
-                    'success': True, 'message': 'Verification code was sent to your phon number',
-                    'tokens': user.tokens
-                }, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'err': f'{e}'}, status=status.HTTP_400_BAD_REQUEST)
+        phone_number = request.data.get('phone_number')
+        user = get_object_or_404(Account, phone_number=phone_number)
+        if user.is_verified:
+            serializer = self.serializer_class(data=request.data)
+            serializer.is_valid()
+            return Response({
+                'success': True, 'message': 'Verification code was sent to your phon number',
+                'tokens': user.tokens
+            }, status=status.HTTP_200_OK)
+        return Response({
+            'success': False, 'message': 'User is not verified'
+        }, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class VerifyPhoneNumberAPIView(generics.GenericAPIView):
@@ -98,7 +97,7 @@ class ReVerifyPhoneNumberAPIView(generics.GenericAPIView):
             return Response({"success": True, "message": "verify code sent your phone number"},
                             status=status.HTTP_201_CREATED)
         except Exception as e:
-            return Response({"success": False, 'error': f'{e}'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"success": False, 'error': 'Something went wrong'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class LogoutView(generics.GenericAPIView):
@@ -182,7 +181,7 @@ class CountryListView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 
 
-class CityListView(generics.ListAPIView):
+class CityListView(generics.ListCreateAPIView):
     serializer_class = CitySerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
 
