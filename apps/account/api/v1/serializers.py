@@ -100,8 +100,8 @@ class AccountProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = [
-            'id', 'first_name', 'last_name', 'phone_number', 'avatar', 'gender', 'birthday', 'address', 'sport_club',
-            'tall', 'weight', 'size', 'date_login', 'date_created'
+            'id', 'first_name', 'last_name', 'phone_number', 'avatar', 'gender', 'birthday', 'country', 'address',
+            'sport_club', 'tall', 'weight', 'size', 'date_login', 'date_created'
         ]
 
 
@@ -204,7 +204,6 @@ class SetNewPasswordSerializer(serializers.ModelSerializer):
         password = attrs.get('password')
         password2 = attrs.get('password2')
         code = attrs.get('code')
-        print(code, password2, password)
         user = get_object_or_404(Account, code=code)
         if not user:
             raise serializers.ValidationError({'success': False, 'message': 'User not found'})
@@ -213,5 +212,3 @@ class SetNewPasswordSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return attrs
-
-

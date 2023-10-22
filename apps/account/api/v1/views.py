@@ -1,5 +1,6 @@
 import random
 
+from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import generics, status, permissions, filters, mixins, viewsets
@@ -10,7 +11,7 @@ from apps.account.models import Account, VerifyPhoneNumber, Country, SportClub, 
 from .permissions import IsOwnUserOrReadOnly
 from .serializers import RegisterSerializer, LoginSerializer, VerifyPhoneNumberRegisterSerializer, \
     VerifyPhoneNumberSerializer, ChangePasswordSerializer, AccountProfileSerializer, AboutMeSerializer, \
-    MyCompetitionsHistorySerializer, CountrySerializer, CitySerializer, SetNewPasswordSerializer
+    MyCompetitionsHistorySerializer, CountrySerializer, CitySerializer, SetNewPasswordSerializer, SportClubSerializer
 from rest_framework.response import Response
 
 from .utils import verify
@@ -29,7 +30,6 @@ class RegisterAPIView(generics.GenericAPIView):
             phone_number = serializer.data['phone_number']
             code = str(random.randint(100_000, 999_999))
             response = verify(phone_number, code)
-            print(serializer.data)
             if response.status_code == 200:  # sms provider kelganida ishga tushadi
                 user = get_object_or_404(Account, phone_number=phone_number)
                 user.code = code
@@ -188,15 +188,16 @@ class CityListView(generics.ListCreateAPIView):
     def get_queryset(self):
         search = self.request.query_params.get('search')
         if search:
-            return City.objects.filter(country_id=search).order_by('name')
-        return City.objects.all().order_by('name')
+            return City.objects.filter(Q(country_id=search) | Q(name__icontains=search)).order_by('country__name')
+        return City.objects.all().order_by('country__name')
 
 
 class SportClubListView(generics.ListCreateAPIView):
     queryset = SportClub.objects.all().order_by('name')
-    serializer_class = CountrySerializer
+    serializer_class = SportClubSerializer
     search_fields = ['name']
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    parser_classes = (MultiPartParser, FormParser)
 
 
 class SetNewPasswordCompletedAPIView(mixins.UpdateModelMixin, viewsets.GenericViewSet):
@@ -208,7 +209,6 @@ class SetNewPasswordCompletedAPIView(mixins.UpdateModelMixin, viewsets.GenericVi
 
     def patch(self, request, *args, **kwargs):
         code = self.kwargs['code']
-        user = get_object_or_404(Account, code=code)
         serializer = self.serializer_class(data=request.data, context={'request': request, 'code': code})
         serializer.is_valid(raise_exception=True)
         return Response({'success': True, 'message': 'Successfully set new password'}, status=status.HTTP_200_OK)

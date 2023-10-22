@@ -58,7 +58,7 @@ class SMSToken(models.Model):
 
 
 class Country(models.Model):
-    name = models.CharField(max_length=50, null=True, blank=True)
+    name = models.CharField(max_length=50, null=True, blank=True, unique=True)
     flag = models.URLField(null=True, blank=True)
 
     def __str__(self):
@@ -66,7 +66,7 @@ class Country(models.Model):
 
 
 class City(models.Model):
-    name = models.CharField(max_length=50, null=True, blank=True)
+    name = models.CharField(max_length=50, null=True, blank=True, unique=True)
     country = models.ForeignKey(Country, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
@@ -75,7 +75,7 @@ class City(models.Model):
 
 class SportClub(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
-    flag = models.ImageField(null=True, blank=True)
+    flag = models.ImageField(null=True, blank=True, upload_to='sport_club/')
 
     def __str__(self):
         return self.name
@@ -93,6 +93,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     size = models.CharField(max_length=5, choices=SIZE, default='none', help_text='none, xs, s, m, l, xl, xxl, xxxl, ')
     tall = models.FloatField(null=True, blank=True)
     weight = models.FloatField(null=True, blank=True)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, null=True, blank=True)
     address = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
     sport_club = models.ForeignKey(SportClub, on_delete=models.SET_NULL, null=True, blank=True)
     is_verified = models.BooleanField(default=False)

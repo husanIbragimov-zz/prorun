@@ -31,12 +31,9 @@ class ParticipantResource(resources.ModelResource):
         Override to add additional logic. Does nothing by default.
         Manually removing commit hooks for intermediate save_points of atomic transaction
         """
-        print(result, dataset)
 
         for data in dataset:
-            print(data)
             model = get_object_or_404(Participant, id=data[12])
-            print(model)
             duration_str = data[4]
             position_str = data[2]
             try:

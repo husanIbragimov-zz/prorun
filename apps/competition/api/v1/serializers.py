@@ -117,7 +117,6 @@ class ChoiceParticipantSerializer(serializers.ModelSerializer):
 
     def get_is_active(self, obj):
         user = self.context.get('user')
-        print(user, obj)
         if user == obj.user:
             return True
         return False
@@ -129,7 +128,6 @@ class ChoiceSerializer(serializers.ModelSerializer):
 
     def get_participants(self, obj):
         user = self.context.get('user')
-        print(user, obj)
         participants = Participant.objects.filter(choice_id=obj.id, user_id=user.id).first()
         return ChoiceParticipantSerializer(participants, context={'user': user}, many=False).data
 
