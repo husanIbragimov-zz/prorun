@@ -99,16 +99,18 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 class AccountProfileSerializer(serializers.ModelSerializer):
     country_name = serializers.CharField(source='country.name', read_only=True)
     city_name = serializers.CharField(source='address.name', read_only=True)
+    club_name = serializers.CharField(source='sport_club.name', read_only=True)
 
     class Meta:
         model = Account
         fields = [
             'id', 'first_name', 'last_name', 'phone_number', 'avatar', 'gender', 'birthday', 'country', 'country_name',
-            'address', 'city_name', 'sport_club', 'tall', 'weight', 'size', 'date_login', 'date_created'
+            'address', 'city_name', 'sport_club', 'club_name', 'tall', 'weight', 'size', 'date_login', 'date_created'
         ]
         extra_kwargs = {
             'country_name': {'read_only': True},
             'city_name': {'read_only': True},
+            'club_name': {'read_only': True},
         }
 
 
