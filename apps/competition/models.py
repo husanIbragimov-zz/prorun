@@ -1,8 +1,8 @@
-from django.db import models
 from apps.account.models import Account
 from apps.base.models import BaseModel
-from datetime import datetime
 from apps.main.models import Partner
+from datetime import datetime
+from django.db import models
 
 STATUS = (
     ('future', 'Future'),
@@ -26,6 +26,7 @@ class Competition(BaseModel):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=223, null=True, blank=True)
     sub_title = models.CharField(max_length=223, null=True, blank=True)
+    amount = models.FloatField(null=True, blank=True)
     image = models.ImageField(upload_to='competitions/', null=True, blank=True)
     youtube = models.URLField(null=True, blank=True)
     media = models.FileField(upload_to='video/', null=True, blank=True)
@@ -48,16 +49,17 @@ class Competition(BaseModel):
         curr_date = datetime.now().date()
         if self.start_date > curr_date and self.end_date > curr_date:
             self.status = 'future'
-        elif self.start_date <= curr_date and self.end_date >= curr_date:
+        elif self.start_date <= curr_date <= self.end_date:
             self.status = 'now'
         else:
             self.status = 'past'
         self.save()
         return "success"
-    
+
 
 class HistoryImage(BaseModel):
-    competition = models.ForeignKey(Competition, on_delete=models.CASCADE, null=True, blank=True, related_name="history_images")
+    competition = models.ForeignKey(Competition, on_delete=models.CASCADE, null=True, blank=True,
+                                    related_name="history_images")
     image = models.ImageField(upload_to='history_images/', null=True, blank=True)
     image_url = models.URLField(null=True, blank=True)
 
@@ -107,6 +109,9 @@ class Participant(BaseModel):
     duration = models.TimeField(null=True, blank=True)
     qr_code = models.ImageField(upload_to='qr_code/', null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    payment_status = models.CharField(max_length=20, choices=[("pending", "Pending"), ("paid", "Paid")],
+                                      default="pending")
+    payment_link = models.URLField(null=True, blank=True)
 
     def __str__(self):
         return self.user.get_fullname()

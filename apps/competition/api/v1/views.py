@@ -4,7 +4,6 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status, permissions, filters
 from rest_framework.response import Response
-
 from apps.competition.models import Category, Competition, CompetitionMaps, Participant
 from .qrcode import check_qrcode
 
