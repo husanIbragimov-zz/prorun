@@ -162,7 +162,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     def me(self, request):
         user = request.user
         qs = get_object_or_404(Account, id=user.id, is_verified=True)
-        sz = AboutMeSerializer(qs)
+        sz = AccountProfileSerializer(qs)
         return Response(sz.data)
 
 
