@@ -2,7 +2,7 @@ import random
 
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework import generics, status, permissions, filters, mixins, viewsets
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -149,6 +149,21 @@ class PersonalUserProfileDetailView(generics.RetrieveUpdateAPIView):
     permission_classes = (IsOwnUserOrReadOnly,)
     parser_classes = (MultiPartParser, FormParser)
     lookup_field = 'phone_number'
+
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Account.objects.all()
+    serializer_class = AccountProfileSerializer
+    permission_classes = (IsOwnUserOrReadOnly,)
+    parser_classes = (MultiPartParser, FormParser)
+    lookup_field = 'phone_number'
+
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        user = request.user
+        qs = get_object_or_404(Account, id=user.id, is_verified=True)
+        sz = AboutMeSerializer(qs)
+        return Response(sz.data)
 
 
 class AboutMeListView(generics.RetrieveAPIView):

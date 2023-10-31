@@ -3,11 +3,12 @@ from rest_framework.routers import DefaultRouter
 from apps.account.api.v1.views import RegisterAPIView, LoginAPIView, VerifyPhoneNumberAPIView, \
     ReVerifyPhoneNumberAPIView, ChangePasswordCompletedView, LogoutView, UserProfileListView, \
     PersonalUserProfileDetailView, me, AboutMeListView, MyCompetitionsHistoryListView, CountryListView, \
-    SportClubListView, CityListView, SetNewPasswordCompletedAPIView
+    SportClubListView, CityListView, SetNewPasswordCompletedAPIView, ProfileViewSet
 
 router = DefaultRouter()
 
 router.register('forgot-password', SetNewPasswordCompletedAPIView, basename='forgot-password')
+router.register('users', ProfileViewSet, basename='users')
 
 urlpatterns = [
     path('register/', RegisterAPIView.as_view()),
