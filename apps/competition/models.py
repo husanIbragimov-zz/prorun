@@ -38,7 +38,7 @@ class Competition(BaseModel):
     about = models.TextField(null=True, blank=True)
     link = models.URLField(null=True, blank=True)
     file = models.FileField(upload_to='files/', null=True, blank=True)
-    partners = models.ManyToManyField(Partner, blank=True)
+    partners = models.ManyToManyField(Partner, blank=True, related_name="competition_partners")
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
 

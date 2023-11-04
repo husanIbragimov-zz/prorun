@@ -21,5 +21,5 @@ class NewsRetrieveAPIView(generics.RetrieveAPIView):
 
 
 class PartnerListView(generics.ListAPIView):
-    queryset = Partner.objects.all()
+    queryset = Partner.objects.filter(competition_partners=None)
     serializer_class = PartnerSerializer

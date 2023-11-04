@@ -117,8 +117,12 @@ class JoinToCompetitionCreateView(generics.CreateAPIView):
         user = self.request.user
         competition_map = get_object_or_404(CompetitionMaps, id=competition_map_id)
         competition = get_object_or_404(Competition, id=competition_map.competition.id)
+        participant_count = competition_map.participant_choices.count()
         if competition_map.participant_choices.filter(user=user):
             return Response({"message": "You have already joined this competition"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if competition.members >= participant_count:
+            return Response({"message": "Sorry, this competition is full"}, status=status.HTTP_400_BAD_REQUEST)
 
         if competition_map and competition.status == 'now' and user.weight and user.tall:
             Participant.objects.get_or_create(user=user, choice_id=competition_map.id, competition_id=competition.id)
@@ -128,6 +132,7 @@ class JoinToCompetitionCreateView(generics.CreateAPIView):
 
 
 class MyCompetitionGetListView(generics.ListAPIView):
+    queryset = Competition.objects.filter(Q(status='now'))
     serializer_class = FutureCompetitionSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -137,11 +142,12 @@ class MyCompetitionGetListView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         if user:
-            return Competition.objects.filter(Q(competition_participants__user=user), Q(status='now')).order_by('-id')
+            return self.queryset.filter(Q(competition_participants__user=user)).order_by('-id')
         return Response({'message': 'Error'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MyOldCompetitionsListView(generics.ListAPIView):
+    queryset = Competition.objects.all()
     serializer_class = PastCompetitionSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -151,7 +157,7 @@ class MyOldCompetitionsListView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         if user:
-            return Competition.objects.filter(Q(competition_participants__user=user), Q(status='past')).order_by('-id')
+            return self.queryset.filter(Q(competition_participants__user=user), Q(status='past')).order_by('-id')
         return Response({'message': 'Error'}, status=status.HTTP_400_BAD_REQUEST)
 
 
