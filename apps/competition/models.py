@@ -1,3 +1,5 @@
+from django.utils.safestring import mark_safe
+
 from apps.account.models import Account
 from apps.base.models import BaseModel
 from apps.main.models import Partner
@@ -45,6 +47,13 @@ class Competition(BaseModel):
     def __str__(self):
         return f"{self.title} - {self.status}"
 
+    @property
+    def image_tag(self):
+        if self.image:
+            return mark_safe(
+                f'<a href="{self.image.url}"><img src="{self.image.url}" style="height:450px; width: 600px;"/></a>')
+        return 'no_image'
+
     def update_status(self):
         curr_date = datetime.now().date()
         if self.start_date > curr_date and self.end_date > curr_date:
@@ -63,6 +72,14 @@ class HistoryImage(BaseModel):
     image = models.ImageField(upload_to='history_images/', null=True, blank=True)
     image_url = models.URLField(null=True, blank=True)
 
+    def image_tag(self):
+        if self.image:
+            return mark_safe(f'<a href="{self.image.url}"><img src="{self.image.url}" style="height:50px;"/></a>')
+        return 'no_image'
+
+    def __str__(self):
+        return self.competition.title
+
 
 class CompetitionMaps(BaseModel):
     competition = models.ForeignKey(Competition, on_delete=models.CASCADE, null=True, blank=True,
@@ -79,6 +96,11 @@ class CompetitionMaps(BaseModel):
             i.position = counter
             i.save()
         return qs
+
+    def image_tag(self):
+        if self.maps:
+            return mark_safe(f'<a href="{self.maps.url}"><img src="{self.maps.url}" style="height:80px;"/></a>')
+        return 'no_image'
 
     def __str__(self):
         return self.title

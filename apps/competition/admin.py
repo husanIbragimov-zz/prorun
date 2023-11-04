@@ -13,15 +13,21 @@ class CompetitionTextsInline(admin.TabularInline):
 class CompetitionMapsInline(admin.TabularInline):
     model = CompetitionMaps
     extra = 1
+    readonly_fields = ('image_tag',)
+    fields = ('title', 'maps', 'image_tag')
+
     
 class HistoryImageInline(admin.TabularInline):
     model = HistoryImage
     extra = 1
+    readonly_fields = ('image_tag',)
+    fields = ('image', 'image_url', 'image_tag')
 
 
 class CompetitionAdmin(admin.ModelAdmin):
     inlines = [CompetitionMapsInline, CompetitionTextsInline, HistoryImageInline]
-    list_display = ('title', 'category', 'distance', 'status', 'period', 'members')
+    list_display = ('title', 'category', 'distance', 'status', 'period', 'members', 'start_date')
+    readonly_fields = ('image_tag',)
     filter_horizontal = ('partners',)
 
 
@@ -32,7 +38,8 @@ class ParticipantInline(admin.StackedInline):
 
 class CompetitionMapsAdmin(admin.ModelAdmin):
     inlines = [ParticipantInline]
-    list_display = ('competition', 'title', 'set_position')
+    list_display = ('competition', 'title')
+    readonly_fields = ('image_tag',)
 
 
 class ParticipantAdmin(ImportExportModelAdmin, admin.ModelAdmin):
