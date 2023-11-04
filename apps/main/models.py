@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils.safestring import mark_safe
+
 from apps.base.models import BaseModel
 
 
@@ -34,3 +36,9 @@ class Partner(models.Model):
 
     def __str__(self):
         return self.name
+
+    def image_tag(self):
+        if self.logo:
+            return mark_safe(f'<a href="{self.logo.url}"><img src="{self.logo.url}" style="height:50px;"/></a>')
+        return 'no_image'
+

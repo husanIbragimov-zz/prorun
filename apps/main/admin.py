@@ -7,5 +7,10 @@ class ModelNameAdmin(admin.ModelAdmin):
     list_display = ('title', 'id')
 
 
-admin.site.register(Partner)
+class PartnerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'image_tag')
+    readonly_fields = ['image_tag']
+
+
+admin.site.register(Partner, PartnerAdmin)
 admin.site.register(BlogCategory)
