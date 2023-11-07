@@ -84,6 +84,7 @@ class SportClub(models.Model):
 class Account(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=223, null=True, blank=True)
     last_name = models.CharField(max_length=223, null=True, blank=True)
+    email = models.EmailField(unique=True, db_index=True, null=True)
     phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True,
                                     unique=True, help_text='for example: +998945588859')  # validators should be a list
     code = models.CharField(max_length=6, null=True, blank=True, unique=True)

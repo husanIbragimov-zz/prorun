@@ -1,6 +1,10 @@
+import re
 from django.contrib.auth import authenticate
 from django.db.models import Count
 from rest_framework import serializers
+from rest_framework.exceptions import AuthenticationFailed
+
+from apps.account.api.v1.validators import validate_file_size, is_word_latin
 from apps.account.models import Account, VerifyPhoneNumber, phone_regex, Country, SportClub, City
 from apps.competition.models import Participant
 from django.shortcuts import get_object_or_404
@@ -8,11 +12,20 @@ from django.shortcuts import get_object_or_404
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=6, max_length=16, write_only=True)
-    avatar = serializers.ImageField()
+    avatar = serializers.FileField(required=True, validators=[validate_file_size])
+    phone_number = serializers.CharField(max_length=17, required=True)
+    first_name = serializers.CharField(max_length=50, required=True, validators=[is_word_latin])
+    last_name = serializers.CharField(max_length=50, required=True, validators=[is_word_latin])
+    email = serializers.EmailField(write_only=True, required=True)
+    birthday = serializers.DateField(write_only=True, required=True)
+    country = serializers.CharField(max_length=50, required=True)
+    size = serializers.CharField(max_length=50, required=True)
 
     class Meta:
         model = Account
-        fields = ('id', 'phone_number', 'password', 'first_name', 'last_name', 'avatar', 'gender', 'birthday')
+        fields = (
+            'id', 'phone_number', 'password', 'first_name', 'last_name', 'email', 'avatar', 'gender', 'birthday',
+            'size', 'country', 'sport_club')
 
     def create(self, validated_data):
         return Account.objects.create_user(**validated_data)
@@ -23,7 +36,8 @@ class LoginSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=16, write_only=True)
     tokens = serializers.SerializerMethodField(read_only=True)
 
-    def get_tokens(self, obj):
+    @staticmethod
+    def get_tokens(obj):
         user = Account.objects.filter(phone_number=obj.get('phone_number')).first()
         return user.tokens
 
@@ -36,16 +50,15 @@ class LoginSerializer(serializers.ModelSerializer):
         password = attrs.get('password')
         user = authenticate(phone_number=phone_number, password=password)
         if not user:
-            raise serializers.ValidationError({'success': False, 'message': 'User not found'})
+            raise AuthenticationFailed({'success': False, 'message': 'User not found'})
         if not user.is_verified:
-            raise serializers.ValidationError({'success': False, 'message': 'User is not verified'})
+            raise AuthenticationFailed({'success': False, 'message': 'User is not verified'})
 
         data = {
             'success': True,
             'phone_number': user.phone_number,
             'tokens': user.tokens
         }
-
         return data
 
 
@@ -98,18 +111,18 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 
 class AccountProfileSerializer(serializers.ModelSerializer):
     country_name = serializers.CharField(source='country.name', read_only=True)
-    city_name = serializers.CharField(source='address.name', read_only=True)
+    # city_name = serializers.CharField(source='address.name', read_only=True)
     club_name = serializers.CharField(source='sport_club.name', read_only=True)
 
     class Meta:
         model = Account
         fields = [
             'id', 'first_name', 'last_name', 'phone_number', 'avatar', 'gender', 'birthday', 'country', 'country_name',
-            'address', 'city_name', 'sport_club', 'club_name', 'tall', 'weight', 'size', 'date_login', 'date_created'
+            'address', 'sport_club', 'club_name', 'size', 'date_login', 'date_created'
         ]
         extra_kwargs = {
             'country_name': {'read_only': True},
-            'city_name': {'read_only': True},
+            # 'city_name': {'read_only': True},
             'club_name': {'read_only': True},
         }
 

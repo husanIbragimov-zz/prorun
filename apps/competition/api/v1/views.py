@@ -124,7 +124,7 @@ class JoinToCompetitionCreateView(generics.CreateAPIView):
         if competition.members >= participant_count:
             return Response({"message": "Sorry, this competition is full"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if competition_map and competition.status == 'now' and user.weight and user.tall:
+        if competition_map and competition.status == 'now':
             Participant.objects.get_or_create(user=user, choice_id=competition_map.id, competition_id=competition.id)
             return Response({'message': 'Success'}, status=status.HTTP_201_CREATED)
         return Response({'status': False, 'message': 'Something went wrong! Maybe you don\'t insert tall or weight'},

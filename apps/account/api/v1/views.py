@@ -48,18 +48,12 @@ class LoginAPIView(generics.GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self, request):
-        phone_number = request.data.get('phone_number')
-        user = get_object_or_404(Account, phone_number=phone_number)
-        if user.is_verified:
+        try:
             serializer = self.serializer_class(data=request.data)
-            serializer.is_valid()
-            return Response({
-                'success': True, 'message': 'Verification code was sent to your phon number',
-                'tokens': user.tokens
-            }, status=status.HTTP_200_OK)
-        return Response({
-            'success': False, 'message': 'User is not verified'
-        }, status=status.HTTP_401_UNAUTHORIZED)
+            if serializer.is_valid():
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'success': False, 'message': f'{e}'},status=status.HTTP_400_BAD_REQUEST)
 
 
 class VerifyPhoneNumberAPIView(generics.GenericAPIView):
