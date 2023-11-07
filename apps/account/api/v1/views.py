@@ -52,8 +52,8 @@ class LoginAPIView(generics.GenericAPIView):
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
                 return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'success': False, 'message': f'You are entering a f@cking incorrect phone or password'},
+        except:
+            return Response({'success': False, 'message': f'Password or phone number invalid'},
                             status=status.HTTP_400_BAD_REQUEST)
 
 
