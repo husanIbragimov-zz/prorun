@@ -53,7 +53,8 @@ class LoginAPIView(generics.GenericAPIView):
             if serializer.is_valid():
                 return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'success': False, 'message': f'{e}'},status=status.HTTP_400_BAD_REQUEST)
+            return Response({'success': False, 'message': f'You are entering a f@cking incorrect phone or password'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class VerifyPhoneNumberAPIView(generics.GenericAPIView):
