@@ -18,8 +18,6 @@ class RegisterSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(max_length=50, required=True, validators=[is_word_latin])
     email = serializers.EmailField(write_only=True, required=True)
     birthday = serializers.DateField(write_only=True, required=True)
-    country = serializers.CharField(max_length=50, required=True)
-    size = serializers.CharField(max_length=50, required=True)
 
     class Meta:
         model = Account
@@ -117,7 +115,7 @@ class AccountProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = [
-            'id', 'first_name', 'last_name', 'phone_number', 'avatar', 'gender', 'birthday', 'country', 'country_name',
+            'id', 'first_name', 'last_name', 'email', 'phone_number', 'avatar', 'gender', 'birthday', 'country', 'country_name',
             'address', 'sport_club', 'club_name', 'size', 'date_login', 'date_created'
         ]
         extra_kwargs = {
