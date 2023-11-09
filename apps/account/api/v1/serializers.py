@@ -224,11 +224,16 @@ class SetNewPasswordSerializer(serializers.ModelSerializer):
         password = attrs.get('password')
         password2 = attrs.get('password2')
         code = attrs.get('code')
-        user = get_object_or_404(Account, code=code)
-        if not user:
-            raise serializers.ValidationError({'success': False, 'message': 'User not found'})
+        # user = get_object_or_404(Account, code=code)
+        # if not user:
+        #     raise serializers.ValidationError({'success': False, 'message': 'User not found'})
         if password != password2:
             raise serializers.ValidationError({'success': False, 'message': 'Passwords not match'})
-        user.set_password(password)
-        user.save()
+        # user.set_password(password)
+        # user.save()
         return attrs
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['password'])
+        instance.save()
+        return instance

@@ -219,6 +219,10 @@ class SetNewPasswordCompletedAPIView(mixins.UpdateModelMixin, viewsets.GenericVi
 
     def patch(self, request, *args, **kwargs):
         code = self.kwargs['code']
-        serializer = self.serializer_class(data=request.data, context={'request': request, 'code': code})
+        user = get_object_or_404(Account, code=code)
+        if not user:
+            return Response({'success': False, 'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.serializer_class(instance=user, data=request.data, context={'request': request, 'code': code})
         serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response({'success': True, 'message': 'Successfully set new password'}, status=status.HTTP_200_OK)
