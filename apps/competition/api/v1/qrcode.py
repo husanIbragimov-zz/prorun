@@ -13,10 +13,10 @@ def generate_qrcode():
                 qr_img = qrcode.make(f"{j.user_id}")
                 j.qr_code = qr_img.save(f"qr-img-{j.user_id}.jpg")
                 j.save()
-                print("QR code generated successfully.")
-            else:
-                print('Qr code is not generated')
-    print("success!")
+            #     print("QR code generated successfully.")
+            # else:
+            #     print('Qr code is not generated')
+    # print("success!")
 
 
 def check_qrcode(participant):

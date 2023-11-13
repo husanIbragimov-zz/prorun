@@ -13,7 +13,6 @@ from .serializers import RegisterSerializer, LoginSerializer, VerifyPhoneNumberR
     VerifyPhoneNumberSerializer, ChangePasswordSerializer, AccountProfileSerializer, AboutMeSerializer, \
     MyCompetitionsHistorySerializer, CountrySerializer, CitySerializer, SetNewPasswordSerializer, SportClubSerializer
 from rest_framework.response import Response
-
 from .utils import verify
 
 
@@ -24,10 +23,25 @@ class RegisterAPIView(generics.GenericAPIView):
 
     def post(self, request):
         try:
-            serializer = self.serializer_class(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            phone_number = serializer.data['phone_number']
+            phone_number = request.data.get('phone_number')
+            existing_user = Account.objects.filter(phone_number=phone_number).first()
+            if existing_user:
+                if existing_user.is_verified:
+                    return Response(
+                        {
+                            'success': False, 'message': 'Already registered with this phone number'
+                        }, status=status.HTTP_400_BAD_REQUEST
+                    )
+                serializer = self.serializer_class(instance=existing_user, data=request.data)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                # for hashing password
+                existing_user.set_password(request.data['password'])
+                existing_user.save()
+            else:
+                serializer = self.serializer_class(data=request.data)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
             code = str(random.randint(100_000, 999_999))
             response = verify(phone_number, code)
             if response.status_code == 200:  # sms provider kelganida ishga tushadi
@@ -36,9 +50,13 @@ class RegisterAPIView(generics.GenericAPIView):
                 user.save()
                 return Response({'success': True, 'message': 'Please verify phone number'},
                                 status=status.HTTP_201_CREATED)
-            if response.status_code == 401:
-                return Response({'success': False, 'message': 'Invalid token, Please try again'},
-                                status=status.HTTP_401_UNAUTHORIZED)
+            else:
+                return Response({'success': False, 'message': 'Internal Server Error'},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # invalid token is not user's problem!
+            # if response.status_code == 401:
+            #     return Response({'success': False, 'message': 'Invalid token, Please try again'},
+            #                     status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'success': False, 'message': f'{e}'},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -52,7 +70,7 @@ class LoginAPIView(generics.GenericAPIView):
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
                 return Response(serializer.data, status=status.HTTP_200_OK)
-        except:
+        except (Exception,):
             return Response({'success': False, 'message': f'Password or phone number invalid'},
                             status=status.HTTP_400_BAD_REQUEST)
 
