@@ -43,6 +43,8 @@ class Competition(BaseModel):
     partners = models.ManyToManyField(Partner, blank=True, related_name="competition_partners")
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
+    regulation_link = models.CharField(max_length=223, null=True, blank=True)
+    offer_link = models.CharField(max_length=223, null=True, blank=True)
 
     def __str__(self):
         return f"{self.title} - {self.status}"
