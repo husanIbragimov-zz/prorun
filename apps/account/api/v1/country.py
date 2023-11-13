@@ -27,7 +27,7 @@ def get_city():
     df = pd.DataFrame(r)
     admin_name = df['admin_name']
     country = df['country']
-    print(len(admin_name))
+    # print(len(admin_name))
     try:
         for i in range(len(admin_name)):
             countries = Country.objects.filter(name__icontains=country[i])

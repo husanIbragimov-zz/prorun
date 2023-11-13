@@ -223,7 +223,7 @@ class SetNewPasswordSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         password = attrs.get('password')
         password2 = attrs.get('password2')
-        code = attrs.get('code')
+        # code = attrs.get('code')
         # user = get_object_or_404(Account, code=code)
         # if not user:
         #     raise serializers.ValidationError({'success': False, 'message': 'User not found'})

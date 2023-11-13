@@ -19,7 +19,11 @@ def login(email, password):
 
 
 def verify(phone_number, code):
-    token = SMSToken.objects.last().token
+    token_obj = SMSToken.objects.last()
+    if not token_obj:
+        login(EMAIL, PASSWORD)
+        return verify(phone_number, code)
+    token = token_obj.token
     phone_number = str(phone_number)[1:13]
     URL = "https://notify.eskiz.uz/api/message/sms/send"
     PARAMS = {
