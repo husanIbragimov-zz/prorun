@@ -131,7 +131,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         if self.phone_number:
-            return self.phone_number
+            return f"{self.phone_number}"
         return "None phone number"
 
 
