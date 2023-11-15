@@ -130,7 +130,9 @@ class Account(AbstractBaseUser, PermissionsMixin):
         return data
 
     def __str__(self):
-        return self.phone_number
+        if self.phone_number:
+            return self.phone_number
+        return "None phone number"
 
 
 class VerifyPhoneNumber(models.Model):
