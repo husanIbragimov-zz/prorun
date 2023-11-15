@@ -117,11 +117,12 @@ class JoinToCompetitionCreateView(generics.CreateAPIView):
         user = self.request.user
         competition_map = get_object_or_404(CompetitionMaps, id=competition_map_id)
         competition = get_object_or_404(Competition, id=competition_map.competition.id)
-        participant_count = competition_map.participant_choices.count()
-        if competition_map.participant_choices.filter(user=user):
+        participant_count = competition.competition_participants.count()
+        print(participant_count)
+        if competition.competition_participants.filter(user=user):
             return Response({"message": "You have already joined this competition"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if competition.members >= participant_count:
+        if competition.members <= participant_count:
             return Response({"message": "Sorry, this competition is full"}, status=status.HTTP_400_BAD_REQUEST)
 
         if competition_map and competition.status == 'now':
